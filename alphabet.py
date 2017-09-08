@@ -9,6 +9,7 @@ class alphabet(object):
         for line in ab_file.readlines():
             kv = line.split('   ')
             self.ab_dict[kv[0]] = kv[1]
+        ab_file.close()
 
     def chinese2ab(self, chinesestr):
         # print (chinesestr)
