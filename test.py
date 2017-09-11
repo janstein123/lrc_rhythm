@@ -88,13 +88,63 @@ def clear_lrc(lrc):
     return lrc
 
 
-lyric_text = downloadLrcById('415792916')
+def find_author(lrc):
+    p = re.compile(u"作词 *[:：].+\n")
+    match = re.search(p, lrc)
 
-lyric_text = clear_lrc(lyric_text)
+    if match is not None:
+        match_str = match.group()
+        print match_str
+        if ':' in match_str:
+            author = match_str.split(':')[1].strip()
+            if author:
+                return author
+        elif '：' in match_str:
+            author = match_str.split('：')[1]
+            if author:
+                return author
+    return None
+
+
+def remove_time(lrc):
+    p = re.compile(u"\[.+\]")
+    lrc = re.sub(p, "", lrc)
+    return lrc
+
+
+def remove_authors(lrc):
+    p = re.compile(u".*[：:].*\n")
+    lrc = re.sub(p, "", lrc)
+    return lrc
+
+
+def remove_aside(lrc):
+    # pattern = re.compile(u"(\(.+\))|(（.+）)")
+    pattern = re.compile(u"[(（].+[)）]")
+    lrc = re.sub(pattern, '', lrc)
+    return lrc
+
+
+# lyric_text = downloadLrcById('479028095')
+lyric_text = u"fafa作曲 : 周杰伦\n[00:01.00] 作词 : 方文山 \n[00:22.170]从前从前有只猫头鹰 \n (kjfladjl大姐夫那就对了）\n hello my world(发链接了)\n"
+lrc_author = find_author(lyric_text)
+if lrc_author is not None:
+    print '--------'+lrc_author+'-----------'
+lyric_text = remove_time(lyric_text)
+print lyric_text
+print '----------------------------'
+lyric_text = remove_authors(lyric_text)
+print lyric_text
+print '----------------------------'
+lyric_text = remove_aside(lyric_text)
+print lyric_text
+
+
+# lyric_text = clear_lrc(lyric_text)
 
 # print lyric_text
 
-lrc_lines, author = process_lrc(lyric_text)
+# lrc_lines, author = process_lrc(lyric_text)
 
 # print author
 #
