@@ -43,19 +43,15 @@ initial_list = ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q',
                  'r', 'y', 'w']
 
 
-def getSongList():
-    response = requests.get("https://music.163.com/#/discover/artist")
-    print response.text
-    soup = BeautifulSoup(response.content, 'html.parser', from_encoding='utf-8')
-    print soup.find('div', attrs={"class": "j-showoff u-showoff f-hide"})
-
-
 def downloadLrcById(id):
     url = 'https://music.163.com/api/song/lyric?id=' + id + '&lv=1&kv=1&tv=-1'
     # data = urllib2.urlopen(url).read()
     response = requests.get(url)
     print response.content
-    return response.json()["lrc"]["lyric"]
+    try:
+        return response.json()["lrc"]["lyric"]
+    except KeyError as e:
+        return None
 
 
 def find_author(lrc):
@@ -128,60 +124,31 @@ def remove_repeated_line(lrc):
             newlines.append(l)
     return newlines
 
-print time.time()
-lyric_text = downloadLrcById('415792916')
+def clear_lyric(raw_lrc):
+    new_lrc = remove_time(raw_lrc)
+    # print lyric_text
+    # print '----------------------------'
+    new_lrc = remove_authors(new_lrc)
+    # print lyric_text
+    # print '----------------------------'
+    new_lrc = remove_aside(new_lrc)
+    # print lyric_text
+    # print '----------------------------'
+    new_lrc = remove_punctuation(new_lrc)
+    # print lyric_text
+    # print '----------------------------'
+    new_lrc = replace_space_with_line_break(new_lrc)
+    # print lyric_text
+    # print '----------------------------'
+    new_lrc = remove_nonsense_eng_word(new_lrc)
+    # print lyric_text
+    # print '----------------------------'
+    new_lrc = remove_line_end_with_english(new_lrc)
+    # print lyric_text
+    # print '----------------------------'
+    line_list = remove_repeated_line(new_lrc)
 
-# lyric_text = u"fafa作曲 : 周杰伦dad\n[00:01.00] 作词 : 方文山 dfa\n[00:22.170]从前从前有只猫头鹰 fad\n kjfladjl大姐夫那就对了\n hello my 阿道夫world(发链接了)\n"
-
-print time.time()
-
-lrc_author = find_author(lyric_text)
-if lrc_author is not None:
-    print '--------' + lrc_author + '-----------'
-
-lyric_text = remove_time(lyric_text)
-# print lyric_text
-# print '----------------------------'
-
-lyric_text = remove_authors(lyric_text)
-# print lyric_text
-# print '----------------------------'
-
-lyric_text = remove_aside(lyric_text)
-# print lyric_text
-# print '----------------------------'
-
-lyric_text = remove_punctuation(lyric_text)
-# print lyric_text
-# print '----------------------------'
-
-lyric_text = replace_space_with_line_break(lyric_text)
-# print lyric_text
-# print '----------------------------'
-
-lyric_text = remove_nonsense_eng_word(lyric_text)
-# print lyric_text
-# print '----------------------------'
-
-lyric_text = remove_line_end_with_english(lyric_text)
-# print lyric_text
-# print '----------------------------'
-
-lyric_lines = remove_repeated_line(lyric_text)
-
-if len(lyric_lines) < 2:
-    exit()
-
-lyric_ab_lines = [1] * len(lyric_lines)
-print time.time()
-
-ab = alphabet.alphabet()
-for i in range(len(lyric_lines)):
-    line_ab = ab.chinese2ab(lyric_lines[i])
-    lyric_ab_lines[i] = line_ab
-    # print lyric_lines[i]
-    # print line_ab
-print time.time()
+    return line_list
 
 
 def get_rhythm(word):
@@ -190,43 +157,77 @@ def get_rhythm(word):
     return rhythm
 
 
-result = [[] for rows in range(RHYTHM_NUM)]
-print result
+def analyze_rhythm_result(lyric_lines=[]):
+    if len(lyric_lines) < 2:
+        return None
 
-for i in range(1, len(lyric_ab_lines)):
-    last_last_ab = lyric_ab_lines[i-2][-1] if i > 1 else None
-    last_ab = lyric_ab_lines[i-1][-1]
-    current_ab = lyric_ab_lines[i][-1]
+    lyric_ab_lines = [1] * len(lyric_lines)
 
-    last_ab_rhythm = get_rhythm(last_ab)
-    current_ab_rhythm = get_rhythm(current_ab)
+    ab = alphabet.alphabet()
+    for i in range(len(lyric_lines)):
+        line_ab = ab.chinese2ab(lyric_lines[i])
+        lyric_ab_lines[i] = line_ab
+        # print lyric_lines[i]
+        # print line_ab
+    result = [[] for rows in range(RHYTHM_NUM)]
 
-    last_rhythm_index = rhythm_dict[last_ab_rhythm]
-    current_rhythm_index = rhythm_dict[current_ab_rhythm]
+    for i in range(1, len(lyric_ab_lines)):
+        last_last_ab = lyric_ab_lines[i - 2][-1] if i > 1 else None
+        last_ab = lyric_ab_lines[i - 1][-1]
+        current_ab = lyric_ab_lines[i][-1]
 
-    if last_rhythm_index == current_rhythm_index:
-        if not result[last_rhythm_index]:
-           result[last_rhythm_index].append(lyric_lines[i-1][-2:])
-        result[last_rhythm_index].append(lyric_lines[i][-2:])
-        print 'match last'
-        print last_rhythm_index, current_rhythm_index
-        print last_ab_rhythm, current_ab_rhythm
-        print lyric_lines[i-1][-1:], lyric_lines[i][-1:]
+        last_ab_rhythm = get_rhythm(last_ab)
+        current_ab_rhythm = get_rhythm(current_ab)
 
-    elif last_last_ab is not None:
-        last_last_ab_rhythm = get_rhythm(last_last_ab)
-        last_last_rhythm_index = rhythm_dict[last_last_ab_rhythm]
-        if last_last_rhythm_index == current_rhythm_index:
-            if not result[last_last_rhythm_index]:
-                result[last_last_rhythm_index].append(lyric_lines[i - 2][-2:])
-            result[last_last_rhythm_index].append(lyric_lines[i][-2:])
-            print 'match last last'
-            print last_last_rhythm_index, current_rhythm_index
-            print last_last_ab_rhythm, current_ab_rhythm
-            print lyric_lines[i-2][-1:], lyric_lines[i][-1:]
+        last_rhythm_index = rhythm_dict[last_ab_rhythm]
+        current_rhythm_index = rhythm_dict[current_ab_rhythm]
 
-for i in range(len(result)):
-    print i
-    for w in result[i]:
-        print w
-    print '---------------------------'
+        if last_rhythm_index == current_rhythm_index:
+            if not result[last_rhythm_index]:
+                result[last_rhythm_index].append(lyric_lines[i - 1][-2:])
+            result[last_rhythm_index].append(lyric_lines[i][-2:])
+            print 'match last'
+            print last_rhythm_index, current_rhythm_index
+            print last_ab_rhythm, current_ab_rhythm
+            print lyric_lines[i - 1][-1:], lyric_lines[i][-1:]
+
+        elif last_last_ab is not None:
+            last_last_ab_rhythm = get_rhythm(last_last_ab)
+            last_last_rhythm_index = rhythm_dict[last_last_ab_rhythm]
+            if last_last_rhythm_index == current_rhythm_index:
+                if not result[last_last_rhythm_index]:
+                    result[last_last_rhythm_index].append(lyric_lines[i - 2][-2:])
+                result[last_last_rhythm_index].append(lyric_lines[i][-2:])
+                print 'match last last'
+                print last_last_rhythm_index, current_rhythm_index
+                print last_last_ab_rhythm, current_ab_rhythm
+                print lyric_lines[i - 2][-1:], lyric_lines[i][-1:]
+    return result
+
+
+def get_top_songs(artist_id):
+    response = requests.get('http://music.163.com/artist?id=' + str(artist_id))
+    soup = BeautifulSoup(response.text, 'lxml')
+    tag_list = soup.find('ul', attrs={'class': 'f-hide'}).find_all('a')
+    song_dict = {}
+    for tag in (list(tag_list)):
+        id = str(tag.attrs['href'])[9:]
+        song_dict[id] = tag.text
+        print tag.text
+    print len(song_dict)
+
+lyric_text = downloadLrcById('139774')
+#
+# lrc_author = find_author(lyric_text)
+# if lrc_author is not None:
+#     print '--------' + lrc_author + '-----------'
+# lyric_lines = clear_lyric(lyric_text)
+# for l in lyric_lines:
+#     print l
+# result = analyze_rhythm_result(lyric_lines)
+# for i in range(len(result)):
+#     print i
+#     for w in result[i]:
+#         print w
+#     print '---------------------------'
+# get_top_songs(6452)
