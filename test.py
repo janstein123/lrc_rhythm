@@ -8,6 +8,7 @@ import re
 import time
 from bs4 import BeautifulSoup
 import alphabet
+from lyric_cache import LyricCache
 
 # rhythm_table = [['a', 'ia', 'ua'],
 #                 ['e', 'o', 'uo'],
@@ -55,6 +56,9 @@ def downloadLrcById(id):
 
 
 def find_author(lrc):
+    if lrc is None:
+        return None
+
     p = re.compile(u"作词 *[:：].+\n")
     match = re.search(p, lrc)
 
@@ -216,9 +220,16 @@ def get_top_songs(artist_id):
         print tag.text
     print len(song_dict)
 
-lyric_text = downloadLrcById('139774')
+id = 25706280
+lyric_text = downloadLrcById(str(id))
+lrc_author = find_author(lyric_text)
+
+db = LyricCache()
+if lyric_text is not None:
+    db.insert(song_id=id, lyric=lyric_text, lyricist=lrc_author)
+
 #
-# lrc_author = find_author(lyric_text)
+
 # if lrc_author is not None:
 #     print '--------' + lrc_author + '-----------'
 # lyric_lines = clear_lyric(lyric_text)
