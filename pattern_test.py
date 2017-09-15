@@ -1,12 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import re
+import threading
+from time import sleep
 
-txt = u'中国哦哦哦ohoh中'
 
-p = re.compile(u"[\u4e00-\u9fa5]+$")
+def run(name):
+    sleep(3)
+    print name, ' run'
 
-found_list = re.findall(p, txt)
+threads = []
+for i in range(10):
+    t = threading.Thread(target=run, kwargs={'name':"t"+str(i)})
+    t.setDaemon(True)
+    t.start()
+    threads.append(t)
 
-print found_list
+for t in threads:
+    t.join()

@@ -218,17 +218,24 @@ def get_top_songs(artist_id):
         id = str(tag.attrs['href'])[9:]
         song_dict[id] = tag.text
         print tag.text
-    print len(song_dict)
+    return song_dict
 
-id = 25706280
-lyric_text = downloadLrcById(str(id))
-lrc_author = find_author(lyric_text)
 
+
+artist_id = 6452
+top_songs = get_top_songs(artist_id)
+# id = 25706280
 db = LyricCache()
-if lyric_text is not None:
-    db.insert(song_id=id, lyric=lyric_text, lyricist=lrc_author)
 
-#
+for id in top_songs.keys():
+    print type(id)
+    print "download ", id, ' ', top_songs[id], '..................................'
+    lyric_text = downloadLrcById(str(id))
+    lrc_author = find_author(lyric_text)
+
+    if lyric_text is not None:
+        db.insert(song_id=int(id), song_name=top_songs[id], singer_id=artist_id, singer_name=u'周杰伦', lyric=lyric_text, lyricist=lrc_author)
+
 
 # if lrc_author is not None:
 #     print '--------' + lrc_author + '-----------'
@@ -241,4 +248,3 @@ if lyric_text is not None:
 #     for w in result[i]:
 #         print w
 #     print '---------------------------'
-# get_top_songs(6452)

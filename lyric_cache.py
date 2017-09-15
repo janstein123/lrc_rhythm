@@ -22,11 +22,12 @@ class LyricCache:
         c.close()
 
     def insert(self, song_id, lyric, song_name=None, singer_id=0, singer_name=None, lyricist=None):
-        sql = "INSERT INTO lyrics VALUES (%d, '%s', %d, '%s', '%s', '%s')" % (song_id, song_name, singer_id, singer_name, lyricist, lyric)
+        lyric = lyric.replace(u"'", u"''")
+        sql = "REPLACE INTO lyrics VALUES (%d, '%s', %d, '%s', '%s', '%s')" % (song_id, song_name, singer_id, singer_name, lyricist, lyric)
         c = self.__conn.cursor()
         c.execute(sql)
         self.__conn.commit()
-        c.close()
+        # c.close()
 
 
 # cache = LyricCache()
