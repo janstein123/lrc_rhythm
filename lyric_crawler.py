@@ -22,12 +22,13 @@ def download_lrc(id):
         if rep_dict['tlyric']['lyric'] is not None:
             return None
     except KeyError as e:
+        print 'key error', e
         pass
 
     try:
-        return response.json()["lrc"]["lyric"]
+        return rep_dict["lrc"]["lyric"]
     except KeyError as e:
-        print 'error ', e
+        print 'key error', e
         return None
 
 
@@ -90,27 +91,25 @@ def crawl_top_song_lyric(singer_list):
     t = time.time() - t
     print 'time consumed :', t, 'sec'
 
-s_db = SingerCache()
-all_singers = s_db.query_all()
-
-l_db = LyricCache()
-l_db.clear()
-
-singer_num = len(all_singers)
-part_len = singer_num / 10
-
-for i in range(10):
-    start = i * part_len
-    if i < 9:
-        end = start + part_len
-    else:
-        end = singer_num
-    t = threading.Thread(target=crawl_top_song_lyric, kwargs={'singer_list': all_singers[start:end]})
-    t.start()
+# s_db = SingerCache()
+# all_singers = s_db.query_all()
+#
+#
+# singer_num = len(all_singers)
+# part_len = singer_num / 10
+#
+# for i in range(10):
+#     start = i * part_len
+#     if i < 9:
+#         end = start + part_len
+#     else:
+#         end = singer_num
+#     t = threading.Thread(target=crawl_top_song_lyric, kwargs={'singer_list': all_singers[start:end]})
+#     t.start()
 
 
-# lyric_text = download_lrc(str(65487))
-# print lyric_text
+lyric_text = download_lrc(str(36089838))
+print lyric_text
 # lrc_author = find_author(lyric_text)
 # print lrc_author, len(lrc_author)
 # l_db = LyricCache()
