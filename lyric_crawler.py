@@ -9,26 +9,28 @@ import time
 
 from lyric_cache import LyricCache
 from singer_cache import SingerCache
+from all_singer_cache import AllSingerCache
 from bs4 import BeautifulSoup
 
 
 def download_lrc(id):
-    url = 'https://music.163.com/api/song/lyric?id=' + id + '&lv=1&kv=1&tv=-1'
-    response = requests.get(url)
+    url = 'https://music.163.com/api/song/lyric'
+    response = requests.get(url, {'id': id, 'lv': 1, 'kv': 1, 'tv': -1})
     # print response.content
     rep_dict = response.json()
-    try:
-        # remove foreign songs
-        if rep_dict['tlyric']['lyric'] is not None:
-            return None
-    except KeyError as e:
-        print 'key error', e
-        pass
+    # try:
+    #     # remove foreign songs
+    #     if rep_dict['tlyric']['lyric'] is not None:
+    #         print "foreign song, ignore!!!"
+    #         return None
+    # except KeyError as e:
+    #     print '1 key error', e
+    #     pass
 
     try:
         return rep_dict["lrc"]["lyric"]
     except KeyError as e:
-        print 'key error', e
+        print '2 key error', e
         return None
 
 
@@ -75,7 +77,7 @@ def crawl_top_song_lyric(singer_list):
         lyric_list = []
         i = 1
         for id in top_songs.keys():
-            lyric_text = download_lrc(str(id))
+            lyric_text = download_lrc(id)
             print "downloaded.....", artist_id, artist_name, id, ' ', top_songs[id], str(i) + '/' + str(
                 len(top_songs)), '.............'
 
@@ -91,11 +93,13 @@ def crawl_top_song_lyric(singer_list):
     t = time.time() - t
     print 'time consumed :', t, 'sec'
 
-# s_db = SingerCache()
+
+# s_db = AllSingerCache()
 # all_singers = s_db.query_all()
 #
 #
 # singer_num = len(all_singers)
+# print singer_num
 # part_len = singer_num / 10
 #
 # for i in range(10):
@@ -108,9 +112,10 @@ def crawl_top_song_lyric(singer_list):
 #     t.start()
 
 
-lyric_text = download_lrc(str(36089838))
-print lyric_text
+# lyric_text = download_lrc(str(36089838))
+# print lyric_text
 # lrc_author = find_author(lyric_text)
 # print lrc_author, len(lrc_author)
 # l_db = LyricCache()
 # l_db.insert(song_id=int(408277951), lyric=lyric_text, lyricist=lrc_author)
+print download_lrc(186016)
