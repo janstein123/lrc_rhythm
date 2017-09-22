@@ -46,7 +46,7 @@ class LyricCache:
     def clear(self):
         c = self.__conn.cursor()
         try:
-            c.execute('TRUNCATE TABLE lyrics')
+            c.execute('TRUNCATE TABLE ' + self.__table_name)
             self.__conn.commit()
         except MySQLdb.Error as e:
             print 'clear:' + str(e)

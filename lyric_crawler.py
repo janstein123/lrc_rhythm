@@ -115,9 +115,9 @@ all_singers = s_db.query_all()
 
 singer_num = len(all_singers)
 print singer_num
-part_len = singer_num / 10
+part_len = singer_num / 20
 
-for i in range(10):
+for i in range(20):
     start = i * part_len
     if i < 9:
         end = start + part_len
