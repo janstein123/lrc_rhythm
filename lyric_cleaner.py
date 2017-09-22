@@ -26,22 +26,22 @@ from lyric_cache import LyricCache
 RHYTHM_NUM = 13
 
 rhythm_dict = {'a': 0, 'ia': 0, 'ua': 0,
-                'e': 1, 'o': 1, 'uo': 1,
-                'ie': 2, 'ue': 2, 've': 2,
-                'i': 3, 'v': 3, 'er': 3,
-                'u': 4,
-                'ai': 5, 'uai': 5,
-                'ei': 6, 'ui': 6,
-                'ao': 7, 'iao': 7,
-                'iu': 8, 'ou': 8,
-                'an': 9, 'ian': 9, 'uan': 9,
-                'ang': 10, 'iang': 10, 'uang': 10,
-                'eng': 11, 'ing': 11, 'ong': 11, 'iong': 11,
-                'en': 12, 'in': 12, 'un': 12
+               'e': 1, 'o': 1, 'uo': 1,
+               'ie': 2, 'ue': 2, 've': 2,
+               'i': 3, 'v': 3, 'er': 3,
+               'u': 4,
+               'ai': 5, 'uai': 5,
+               'ei': 6, 'ui': 6,
+               'ao': 7, 'iao': 7,
+               'iu': 8, 'ou': 8,
+               'an': 9, 'ian': 9, 'uan': 9,
+               'ang': 10, 'iang': 10, 'uang': 10,
+               'eng': 11, 'ing': 11, 'ong': 11, 'iong': 11,
+               'en': 12, 'in': 12, 'un': 12
                }
 
 initial_list = ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'z', 'c', 's', 'zh', 'ch', 'sh',
-                 'r', 'y', 'w']
+                'r', 'y', 'w']
 
 
 def remove_time(lrc):
@@ -64,7 +64,7 @@ def remove_aside(lrc):
 
 
 def remove_punctuation(lrc):
-    pattern = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FAcb-zA-Z\n ]')
+    pattern = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z\n ]')
     lrc = re.sub(pattern, '', lrc)
     return lrc
 
@@ -95,6 +95,7 @@ def remove_repeated_line(lrc):
         if len(l) > 1 and l not in newlines:
             newlines.append(l)
     return newlines
+
 
 def clear_lyric(raw_lrc):
     new_lrc = remove_time(raw_lrc)
@@ -177,7 +178,6 @@ def analyze_rhythm_result(lyric_lines=[]):
     return result
 
 
-
 # if lrc_author is not None:
 #     print '--------' + lrc_author + '-----------'
 # lyric_lines = clear_lyric(lyric_text)
@@ -189,3 +189,24 @@ def analyze_rhythm_result(lyric_lines=[]):
 #     for w in result[i]:
 #         print w
 #     print '---------------------------'
+
+db = LyricCache()
+names = db.query_name()
+print len(names), type(names)
+to_del_ids =[]
+for row in names:
+    song_id = row[0]
+    song_name = row[1]
+    singer_name = row[3]
+    # pattern = re.compile(u'cover|伴奏|remix|instrumental|kala|[(（【[].+版[]】）)]|demo|live|version|dj', re.I)
+    p1 = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z0-9\u00a0 \'.,，。！!？?:]')
+    p2 = re.compile(u'\([国]\)')
+    p3 = re.compile(u'cover|伴奏|remix|mix|instrumental|kala|demo|live|version|d\.?j|伴唱|纯音乐', re.I)
+    if (re.search(p1, song_name) and not re.search(p2, song_name)) or re.search(p3, song_name):
+        to_del_ids.append((song_id,))
+        print song_id, song_name
+
+print len(to_del_ids)
+# print str(tuple(to_del_ids))
+if len(to_del_ids) > 0:
+    db.delete_songs(to_del_ids)
