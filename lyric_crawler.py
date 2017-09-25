@@ -12,10 +12,35 @@ from singer_cache import SingerCache
 from all_singer_cache import AllSingerCache
 from bs4 import BeautifulSoup
 
+proxies = {
+    'https': 'http://220.248.207.105:53281',
+    'http': 'http://110.73.7.165:8123',
+}
+
+
+def test_proxy():
+    url = 'http://ip.chinaz.com'
+    try:
+        response = requests.get(url, timeout=10, proxies=proxies)
+        soup = BeautifulSoup(response.text, 'lxml')
+        my_ip = soup.find('p', attrs={'class': 'getlist pl10'})
+        print response.text
+        print my_ip
+    except Exception as e:
+        print 'test_proxy', e
+
+
+# test_proxy()
+
 
 def download_lrc(id):
     url = 'https://music.163.com/api/song/lyric'
-    response = requests.get(url, {'id': id, 'lv': 1, 'kv': 1, 'tv': -1})
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'}
+    response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers, timeout=10,
+                            verify=True,
+                            proxies=proxies)
+    print response.headers
     # print response.content
     rep_dict = response.json()
     # try:
@@ -32,6 +57,9 @@ def download_lrc(id):
     except KeyError as e:
         print '2 key error', e
         return None
+
+
+print download_lrc(186016)
 
 
 def find_author(lrc):
@@ -61,7 +89,7 @@ def is_good_song(song_name):
     p2 = re.compile(u'\([国]\)')
     p3 = re.compile(u'cover|伴奏|remix|mix|instrumental|kala|demo|live|version|d\.?j|伴唱|纯音乐', re.I)
     if (re.search(p1, song_name) and not re.search(p2, song_name)) or re.search(p3, song_name):
-        print '[' + song_name+ '] is not a good song'
+        print '[' + song_name + '] is not a good song'
         return False
     return True
 
@@ -93,7 +121,7 @@ def crawl_top_song_lyric(singer_list, start, end):
         for sid in top_songs.keys():
             lyric_text = download_lrc(sid)
             print "[" + threading.currentThread().getName() + "] downloaded.....", artist_id, artist_name, sid, ' ', \
-            top_songs[sid], str(i) + '/' + str(
+                top_songs[sid], str(i) + '/' + str(
                 len(top_songs)), '.............'
             i = i + 1
             if lyric_text is not None:
@@ -109,23 +137,22 @@ def crawl_top_song_lyric(singer_list, start, end):
     t = time.time() - t
     print "[" + threading.currentThread().getName() + "]", 'time consumed :', t, 'sec'
 
-
-s_db = AllSingerCache()
-all_singers = s_db.query_all()
-
-singer_num = len(all_singers)
-print singer_num
-part_len = singer_num / 20
-
-for i in range(20):
-    start = i * part_len
-    if i < 9:
-        end = start + part_len
-    else:
-        end = singer_num
-    t = threading.Thread(target=crawl_top_song_lyric,
-                         kwargs={'singer_list': all_singers[start:end], 'start': start, 'end': end - 1})
-    t.start()
+# s_db = AllSingerCache()
+# all_singers = s_db.query_all()
+#
+# singer_num = len(all_singers)
+# print singer_num
+# part_len = singer_num / 20
+#
+# for i in range(20):
+#     start = i * part_len
+#     if i < 9:
+#         end = start + part_len
+#     else:
+#         end = singer_num
+#     t = threading.Thread(target=crawl_top_song_lyric,
+#                          kwargs={'singer_list': all_singers[start:end], 'start': start, 'end': end - 1})
+#     t.start()
 
 # lyric_text = download_lrc(str(36089838))
 # print lyric_text
@@ -133,10 +160,6 @@ for i in range(20):
 # print lrc_author, len(lrc_author)
 # l_db = LyricCache()
 # l_db.insert(song_id=int(408277951), lyric=lyric_text, lyricist=lrc_author)
-# print download_lrc(186016)
 
 # get_top_songs(1111005)
 
-# cover_pattern = re.compile(u'cover|伴奏|remix|instrumental|kala|[(（【[].+版[]】）)]|demo|live|version|dj', re.I)
-# print re.search(cover_pattern, u'(xianc版b)')
-# p = re.compile()
