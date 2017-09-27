@@ -12,10 +12,75 @@ from singer_cache import SingerCache
 from all_singer_cache import AllSingerCache
 from bs4 import BeautifulSoup
 
+useful_proxies = (
+    'http://219.135.164.245:3128',
+    # 'http://61.160.208.222:8080',
+    'http://122.72.32.83:80',
+    'http://118.31.103.7:3128',
+    'http://119.23.161.182:3128',
+    'http://139.224.24.26:8888',
+    'http://42.202.130.246:3128',
+    'http://222.222.169.60:53281',
+    'http://124.232.148.7:3128',
+    'http://61.158.111.142:53281',
+    'http://222.89.112.48:53281',
+    'http://58.255.45.23:9000',
+    'http://119.90.248.245:9999',
+    'http://116.236.151.166:8080',
+    'http://113.108.204.74:8888',
+    'http://58.17.116.115:53281',
+    'http://115.233.210.218:808',
+)
 proxies = {
     'https': 'http://220.248.207.105:53281',
     'http': 'http://110.73.7.165:8123',
 }
+
+
+def crawl_proxies():
+    url_prefix = 'http://www.xicidaili.com/wn/'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.3',
+        # 'Referer': 'http://www.xicidaili.com/'
+    }
+    proxies = []
+    for page in range(2):
+        url = url_prefix + str(page + 1)
+        response = requests.get(url, headers=headers)
+        # print response.text
+        soup = BeautifulSoup(response.text, 'lxml')
+        tags = soup.find('table', attrs={'id': 'ip_list'}).find_all('tr')
+        for tag in tags:
+            tds = tag.find_all('td')
+            if len(tds) > 3:
+                ip = tds[1].text.strip()
+                port = tds[2].text.strip()
+                proxy = 'http://' + ip + ':' + port
+                # print proxy
+                proxies.append(proxy)
+
+    print len(proxies)
+    url = 'https://music.163.com/api/song/lyric'
+    proxies_ok = []
+    for proxy in proxies:
+        print proxy
+        try:
+            t = time.time()
+            response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers, timeout=10,
+                                    verify=False,
+                                    proxies={'https': proxy})
+            # print response.headers
+            print 'SUCCESS', time.time() - t, 'sec'
+            proxies_ok.append(proxy)
+        except Exception as e:
+            # print e
+            print 'FAILED'
+    print '-------------------------all', len(proxies_ok), 'useful proxies------------------------------'
+    for proxy in proxies_ok:
+        print proxy
+
+
+# crawl_proxies()
 
 
 def test_proxy():
@@ -37,36 +102,43 @@ def download_lrc(id):
     url = 'https://music.163.com/api/song/lyric'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'}
-    response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers, timeout=10,
-                            verify=True,
-                            proxies=proxies)
-    print response.headers
-    # print response.content
-    rep_dict = response.json()
-    # try:
-    #     # remove foreign songs
-    #     if rep_dict['tlyric']['lyric'] is not None:
-    #         print "foreign song, ignore!!!"
-    #         return None
-    # except KeyError as e:
-    #     print '1 key error', e
-    #     pass
+    for i in range(len(useful_proxies)):
+        try:
+            t = time.time()
+            response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers, timeout=5,
+                                    verify=False,
+                                    proxies={'https': useful_proxies[i]})
+            print 'via proxy', i, useful_proxies[i], response.status_code, time.time() - t
+            if response.status_code != 200:
+                continue
+        except Exception as e:
+            if i < len(useful_proxies) - 1:
+                continue
+            else:
+                print 'via 163'
+                response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers)
+        # print response.headers
+        # print response.content
+        rep_dict = response.json()
 
-    try:
-        return rep_dict["lrc"]["lyric"]
-    except KeyError as e:
-        print '2 key error', e
-        return None
+        try:
+            lrc = rep_dict["lrc"]["lyric"]
+            if len(lrc) < 50:
+                print 'lrc is too short'
+                return None
+            return lrc
+        except KeyError as e:
+            print '2 key error', e
+            return None
 
-
-print download_lrc(186016)
+# print download_lrc(29393117)
 
 
 def find_author(lrc):
     if lrc is None:
         return None
 
-    p = re.compile(u"作词 *[:：].+\n")
+    p = re.compile(u"词 *[:：].+\n")
     match = re.search(p, lrc)
 
     if match is not None:
@@ -119,10 +191,11 @@ def crawl_top_song_lyric(singer_list, start, end):
         lyric_list = []
         i = 1
         for sid in top_songs.keys():
+            t1 = time.time()
             lyric_text = download_lrc(sid)
             print "[" + threading.currentThread().getName() + "] downloaded.....", artist_id, artist_name, sid, ' ', \
                 top_songs[sid], str(i) + '/' + str(
-                len(top_songs)), '.............'
+                len(top_songs)), '.............', time.time() - t1, 'sec'
             i = i + 1
             if lyric_text is not None:
                 lrc_author = find_author(lyric_text)
@@ -162,4 +235,3 @@ def crawl_top_song_lyric(singer_list, start, end):
 # l_db.insert(song_id=int(408277951), lyric=lyric_text, lyricist=lrc_author)
 
 # get_top_songs(1111005)
-

@@ -5,7 +5,7 @@ import MySQLdb
 
 
 class LyricCache:
-    __table_name = 'new_new_lyrics'
+    __table_name = 'new_lyrics'
 
     def __init__(self):
         self.__conn = MySQLdb.connect(host='localhost', user='username', passwd='password', db='musicdb',
@@ -40,6 +40,7 @@ class LyricCache:
         try:
             c.executemany(sql, lyric_list)
             self.__conn.commit()
+            print len(lyric_list), 'songs inserted.'
         except MySQLdb.Error as e:
             print 'insert_many:' + str(e)
 
@@ -61,6 +62,17 @@ class LyricCache:
         except MySQLdb.Error as e:
             print 'query_name:' + str(e)
             return None
+
+    def query_all_lrc(self):
+        c = self.__conn.cursor()
+        try:
+            c.execute('SELECT song_id, song_name, lyric from ' + self.__table_name)
+            self.__conn.commit()
+            return c.fetchall()
+        except MySQLdb.Error as e:
+            print 'query_name:' + str(e)
+            return None
+
 
     def delete_songs(self, ids):
         c = self.__conn.cursor()
