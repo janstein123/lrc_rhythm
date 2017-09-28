@@ -43,6 +43,8 @@ rhythm_dict = {'a': 0, 'ia': 0, 'ua': 0,
 initial_list = ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'z', 'c', 's', 'zh', 'ch', 'sh',
                 'r', 'y', 'w']
 
+n, m, j = 0, 0, 0
+
 
 def remove_time(lrc):
     if not lrc:
@@ -53,12 +55,19 @@ def remove_time(lrc):
     return lrc
 
 
-def is_chinese_str(str):
-    pattern = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCB ]')
+def has_no_chinese(str):
+    # 如果行中没有任何中文字符
+    pattern = re.compile(u'[\u3400-\u4db5\u4E00-\u9FCB]')
     return re.search(pattern, str) is None
 
 
-def remove_authors(sid, name, lrc):
+def has_special_char(str):
+    pattern = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCB 　\u00a0,，。]')
+    return re.search(pattern, str) is not None
+
+
+def remove_non_lrc_line(sid, name, sname, lrc):
+    global m, n
     if not lrc:
         return None
 
@@ -74,55 +83,93 @@ def remove_authors(sid, name, lrc):
             new_lines.append(line)
     head_to_del = []
     tail_to_del = []
+
+    def is_lrc_line(line_with_colon):
+        if u':' not in line and u'：' not in line:
+            return True
+
+        p = re.compile(u'[:：]')
+        lst = re.split(p, line_with_colon, 1)
+        l1 = re.sub(re.compile(u'[ 　\u00a0]'), '', lst[0].strip())
+        l2 = lst[1].strip()
+        # 冒号前面是单字，并且不是以下表示作者信息的字，说明已经到了歌词正文
+        # 冒号后面如果是全中文字符，且长度大于等于7，也认为是到了歌词正文了
+        if (len(l1) == 1 and l1 in (u'词', u'曲', u'编', u'鼓', u'白', u'监', u'詞', u'混', u'箫', u'編')) \
+                or (len(l1) == 2 and l1 in (
+                        u'作词', u'作曲', u'编曲', u'演唱', u'合声', u'伴唱', u'混音', u'母带', u'制作', u'童音', u'微博', u'编排', u'手绘',
+                        u'填词',
+                        u'原曲', u'哼唱', u'原唱', u'翻唱', u'副歌', u'念白', u'视频', u'独白', u'混缩', u'发行', u'配音', u'后期', u'作者',
+                        u'监制',
+                        u'配器', u'歌手', u'设备', u'策划', u'文案', u'出品', u'美工', u'鸣谢', u'笛箫', u'古筝', u'弦乐', u'二胡', u'琵琶',
+                        u'柳琴', u'长笛',
+                        u'笛子', u'录音', u'曲目')) \
+                or len(l1) == 3 and l1 in (
+                        u'小提琴', u'中提琴', u'大提琴', u'录音棚', u'录音室', u'混音室', u'录音师', u'混音师', u'弦乐团', u'制作人', u'出品方', u'电吉他',
+                        u'演唱者', u'专辑名') \
+                or len(l1) > 3 \
+                or has_special_char(l1) \
+                or has_special_char(l2) \
+                or has_no_chinese(l2) \
+                or len(l2) < 7:
+            return False
+        return True
+
+    # 寻找头部非歌词正文行
     for i in range(len(new_lines)):
         line = new_lines[i].strip()
-        if u':' in line or u'：' in line:
-            p = re.compile(u'[:：]')
-            lst = re.split(p, line, 1)
-            l1 = lst[0].strip()
-            l2 = lst[1].strip()
-            # 冒号前面是单字，并且不是以下表示作者信息的字，说明已经到了歌词正文
-            # 冒号后面如果是全中文字符，且长度大于等于7，也认为是到了歌词正文了
-            if (len(l1) == 1 and l1 not in (u'词', u'曲', u'编', u'鼓', u'白', u'监', u'詞', u'混', u'箫', u'編')) \
-                    or (is_chinese_str(l2) and len(l2) >= 7):
+        if has_no_chinese(line):
+            head_to_del.append(i)
+        elif u':' in line or u'：' in line:
+            if is_lrc_line(line):
                 break
             else:
                 head_to_del.append(i)
+        # 如果头部行中有特殊字符，认为是非歌词行，加入删除队列
+        elif re.search(re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z\n 　\u00a0,，。.?？（()）！!]'), line):
+            head_to_del.append(i)
         else:
-            # 判断第一行是否是歌名
-            if i == 0:
-                if line.strip() == name.strip():
-                    # print "match title before"
-                    head_to_del.append(i)
-                else:
-                    break
-            # 判断紧接着作者信息的行是否是歌名
+            name = name.strip()
+
+            def is_song_title_line():
+                # 如果行和歌名完全相同，认为是歌名行
+                # 如果行中包含歌名，并且同时包含非中文非空格非逗号的字符，也认为是歌名行
+                # 行中包含歌名，但是行内只有中文空格逗号字符，说明可能是歌词正文
+                # 如果行中包含歌名，同时也包含歌手名，那一定是歌名行
+                if name == line:
+                    return True
+                elif name in line:
+                    if sname in line:
+                        return True
+                    else:
+                        p = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCB 　\u00a0,，。]')
+                        return re.search(p, line) is not None
+                return False
+
+            if is_song_title_line():
+                head_to_del.append(i)
             else:
-                if line.strip() == name.strip():
-                    head_to_del.append(i)
-                    # print "match title after"
                 break
 
+    # 反向遍历寻找尾部非歌词正文行
     for i in range(len(new_lines) - 1, 0, -1):
         line = new_lines[i].strip()
-        if u':' in line or u'：' in line:
-            p = re.compile(u'[:：]')
-            lst = re.split(p, line, 1)
-            l1 = lst[0].strip()
-            l2 = lst[1].strip()
-            # 冒号前面是单字，并且不是以下表示作者信息的字，说明已经到了歌词正文
-            # 冒号后面如果是全中文字符，且长度大于等于7，也认为是到了歌词正文了
-            if (len(l1) == 1 and l1 not in (u'词', u'曲', u'编', u'鼓', u'白', u'监', u'詞', u'混', u'箫', u'編')) \
-                    or (is_chinese_str(l2) and len(l2) >= 7):
+        if has_no_chinese(line):
+            tail_to_del.append(i)
+        elif u':' in line or u'：' in line:
+            if is_lrc_line(line):
                 break
             else:
                 tail_to_del.append(i)
-        # 如果一行文字中没有冒号了，认为它是到了歌词正文了
+        # 如果头部行中有特殊字符，认为是非歌词行，加入删除队列
+        elif re.search(re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z\n 　\u00a0,，。.?？（()）！!]'), line):
+            tail_to_del.append(i)
+        # 认为它是到了歌词正文了
         else:
             break
-    start = 0
-    end = len(new_lines)
 
+    # 删除头尾非歌词行
+    start = 0
+    end = len(new_lines) - 1
     if len(head_to_del) > 0:
         start = head_to_del[len(head_to_del) - 1] + 1
 
@@ -131,36 +178,78 @@ def remove_authors(sid, name, lrc):
 
     # 小于四行忽略的歌词
     if end - start + 1 < 4:
-        # print '--------------------------', sid, name, '-----------------------------'
-        # if end >= start:
-        #     for l in new_lines[start:end + 1]:
-        #         print l
+        # n = n + 1
+        # print_title(sid, name)
+        # print_lines(lines)
+        # print '----------------------'
+        # print_lines(new_lines[start:end + 1])
         return None
     else:
         return new_lines[start:end + 1]
 
 
-def remove_aside(lrc_lines=[]):
-    # pattern = re.compile(u"(\(.+\))|(（.+）)")
-    if not lrc_lines:
-        return None
+def print_lines(lines=[]):
+    for l in lines:
+        print l
 
-    new_lines = []
-    pattern = re.compile(u"[(（].+[)）]")
-    for line in lrc_lines:
-        line = re.sub(pattern, '', line)
-        if not line.strip():
+
+def print_title(sid, name):
+    print '----------------------', sid, name, '----------------------'
+
+
+def remove_text_before_colon(sid, name, sname, lines=[]):
+    global n, m
+    if lines is None:
+        return None
+    new_lines =[]
+    p = re.compile(u'.+[:：]')
+    for line in lines:
+        if u':' in line or u'：' in line:
+            line = re.sub(p, '', line).strip()
+            if line.strip():
+                new_lines.append(line)
+        else:
             new_lines.append(line)
+
     if len(new_lines) < 4:
         return None
-
     return new_lines
 
 
-def remove_punctuation(lrc):
-    pattern = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z\n ]')
-    lrc = re.sub(pattern, '', lrc)
-    return lrc
+def remove_aside(sid, name, lrc_lines=[]):
+    # pattern = re.compile(u"(\(.+\))|(（.+）)")
+    if not lrc_lines:
+        return None
+    new_lines = []
+    pattern = re.compile(u"[(（].+?[)）]")
+    for line in lrc_lines:
+        line = re.sub(pattern, '', line)
+        if line.strip():
+            new_lines.append(line)
+
+    if len(new_lines) < 4:
+        print_title(sid, name)
+        print_lines(new_lines)
+        return None
+    return new_lines
+
+
+def remove_non_chinese_line(sid, name, lines=[]):
+    global n
+    if not lines:
+        return None
+    showed = False
+    # 注意同时包括全角和半角空格 non breaking space还有
+    pattern = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z\n 　\u00a0,，。?]')
+    for line in lines:
+        if re.search(pattern, line):
+            if not showed:
+                print '-----------------', sid, name, '-----------------'
+                n += 1
+                showed = True
+            print line
+
+    return lines
 
 
 def replace_space_with_line_break(lrc):
@@ -191,28 +280,20 @@ def remove_repeated_line(lrc):
     return newlines
 
 
-def clear_lyric(sid, name, raw_lrc):
+def clean_lyric(sid, name, sname, raw_lrc):
     new_lrc = remove_time(raw_lrc)
-    lines = remove_authors(sid, name, new_lrc)
+    lines = remove_non_lrc_line(sid, name, sname, new_lrc)
+    lines = remove_text_before_colon(sid, name, sname, lines)
+    lines = remove_aside(sid, name, lines)
 
-    lines = remove_aside(lines)
-    # print lyric_text
-    # print '----------------------------'
-    new_lrc = remove_punctuation(new_lrc)
-    # print lyric_text
-    # print '----------------------------'
-    new_lrc = replace_space_with_line_break(new_lrc)
-    # print lyric_text
-    # print '----------------------------'
-    new_lrc = remove_nonsense_eng_word(new_lrc)
-    # print lyric_text
-    # print '----------------------------'
-    new_lrc = remove_line_end_with_english(new_lrc)
-    # print lyric_text
-    # print '----------------------------'
-    line_list = remove_repeated_line(new_lrc)
+    # lines = remove_non_chinese_line(sid, name, lines)
+    # new_lrc = replace_space_with_line_break(new_lrc)
+    # new_lrc = remove_nonsense_eng_word(new_lrc)
+    # new_lrc = remove_line_end_with_english(new_lrc)
 
-    return line_list
+    # line_list = remove_repeated_line(new_lrc)
+
+    return lines
 
 
 def get_rhythm(word):
@@ -291,7 +372,7 @@ def delete_bad_songs():
         song_name = row[1]
         singer_name = row[3]
         # pattern = re.compile(u'cover|伴奏|remix|instrumental|kala|[(（【[].+版[]】）)]|demo|live|version|dj', re.I)
-        p1 = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z0-9\u00a0 \'.,，。！!？?:]')
+        p1 = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z0-9\u00a0 　\'.,，。！!？?:]')
         p2 = re.compile(u'\([国]\)')
         p3 = re.compile(u'cover|伴奏|remix|mix|instrumental|kala|demo|live|version|d\.?j|伴唱|纯音乐', re.I)
         if (re.search(p1, song_name) and not re.search(p2, song_name)) or re.search(p3, song_name):
@@ -317,7 +398,8 @@ def delete_short_lrc():
     for r in rows:
         sid = r[0]
         name = r[1]
-        lines = clear_lyric(sid, name, r[2])
+        sname = r[2]
+        lines = clean_lyric(sid, name, sname, r[3])
         # length = len_of_lines(lines)
         # if length < 50:
         #     print '-----------------------------', id, length, '-----------------------------'
@@ -327,9 +409,10 @@ def delete_short_lrc():
         #     new_dict[id] = lines
 
 
-# delete_short_lrc()
-# new_dict = sorted(a_dict.items(), key=lambda a: a[1], reverse=True)
+delete_short_lrc()
+print n, m, j
 
+# new_dict = sorted(a_dict.items(), key=lambda a: a[1], reverse=True)
 # file = open('nums.txt', 'w')
 # for a in new_dict:
 #     print a[0], a[1]
@@ -343,3 +426,9 @@ def delete_short_lrc():
 #     print a[0], a[1]
 #     file.write(a[0].encode('utf-8') + ', ' + str(a[1]) + '\n')
 # file.close()
+# print hex(ord(u'の'))
+# l = u'许　仙 　'
+# for a in l:
+#     print hex(ord(a))
+# p = re.compile(u'.*?[:：]+?')
+# print re.sub(p, '', u'fafaf:fadaf 作词：ewwoeir你的')

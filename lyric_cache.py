@@ -66,13 +66,13 @@ class LyricCache:
     def query_all_lrc(self):
         c = self.__conn.cursor()
         try:
-            c.execute('SELECT song_id, song_name, lyric from ' + self.__table_name)
+            c.execute('SELECT song_id, song_name, singer_name, lyric from ' + self.__table_name)
+            # c.execute('SELECT song_id, song_name, singer_name, lyric from ' + self.__table_name+' where song_id = 506965056')
             self.__conn.commit()
             return c.fetchall()
         except MySQLdb.Error as e:
             print 'query_name:' + str(e)
             return None
-
 
     def delete_songs(self, ids):
         c = self.__conn.cursor()
