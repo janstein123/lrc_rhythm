@@ -38,11 +38,11 @@ class OneSingerCache:
     def insert_many(self, lyric_list):
         c = self.__conn.cursor()
         sql = "INSERT IGNORE INTO " + self.__table_name + " (song_id, song_name, singer_id, singer_name, album_id, album_name, lyric) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        try:
-            c.executemany(sql, lyric_list)
-            self.__conn.commit()
-        except MySQLdb.Error as e:
-            print e
+        # try:
+        c.executemany(sql, lyric_list)
+        self.__conn.commit()
+        # except MySQLdb.Error as e:
+        #     print e
 
     def clear(self):
         c = self.__conn.cursor()
