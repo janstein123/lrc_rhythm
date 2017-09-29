@@ -18,8 +18,10 @@ class OneSingerCache:
                   'song_name VARCHAR(128), '
                   'singer_id INT, '
                   'singer_name VARCHAR(128), '
-                  'lyricist VARCHAR(128), '
-                  'lyric TEXT NOT NULL);')
+                  'album_id INT, '
+                  'album_name VARCHAR(128), '
+                  'lyric TEXT NOT NULL, '
+                  'lrc_lines TEXT );')
         c.close()
 
     def insert(self, song_id, lyric, song_name=None, singer_id=0, singer_name=None, lyricist=None):
@@ -35,7 +37,7 @@ class OneSingerCache:
 
     def insert_many(self, lyric_list):
         c = self.__conn.cursor()
-        sql = "INSERT IGNORE INTO " + self.__table_name + " VALUES (%s, %s, %s, %s, %s, %s)"
+        sql = "INSERT IGNORE INTO " + self.__table_name + " (song_id, song_name, singer_id, singer_name, album_id, album_name, lyric) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         try:
             c.executemany(sql, lyric_list)
             self.__conn.commit()
@@ -46,4 +48,3 @@ class OneSingerCache:
         c = self.__conn.cursor()
         c.execute('TRUNCATE TABLE ' + self.__table_name)
         self.__conn.commit()
-

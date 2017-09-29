@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="b1271fe1-e776-4e08-9aa8-6870533f451b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/all_singer_cache.py" afterPath="$PROJECT_DIR$/all_singer_cache.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lyric_cache.py" afterPath="$PROJECT_DIR$/lyric_cache.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lyric_cleaner.py" afterPath="$PROJECT_DIR$/lyric_cleaner.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lyric_crawler.py" afterPath="$PROJECT_DIR$/lyric_crawler.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/one_singer_crawler.py" afterPath="$PROJECT_DIR$/one_singer_crawler.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/one_singer_lyric_cache.py" afterPath="$PROJECT_DIR$/one_singer_lyric_cache.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,11 +22,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="lyric_cleaner.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="lyric_cleaner.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lyric_cleaner.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="207" column="40" lean-forward="false" selection-start-line="207" selection-start-column="40" selection-end-line="207" selection-end-column="40" />
+            <state relative-caret-position="195">
+              <caret line="440" column="17" lean-forward="true" selection-start-line="440" selection-start-column="17" selection-end-line="440" selection-end-column="17" />
               <folding>
                 <element signature="e#43#57#0" expanded="true" />
               </folding>
@@ -30,21 +34,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="keys.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/keys.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="7" lean-forward="false" selection-start-line="17" selection-start-column="7" selection-end-line="17" selection-end-column="7" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="__builtin__.py" pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/.PyCharmCE2017.2/system/python_stubs/1879517127/__builtin__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="82">
-              <caret line="1984" column="12" lean-forward="true" selection-start-line="1984" selection-start-column="12" selection-end-line="1984" selection-end-column="12" />
+            <state relative-caret-position="230">
+              <caret line="527" column="4" lean-forward="false" selection-start-line="527" selection-start-column="4" selection-end-line="527" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -53,8 +47,8 @@
       <file leaf-file-name="cursors.py" pinned="false" current-in-tab="false">
         <entry file="file://C:/Program Files/Python/Lib/site-packages/MySQLdb/cursors.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2550">
-              <caret line="171" column="38" lean-forward="false" selection-start-line="171" selection-start-column="38" selection-end-line="171" selection-end-column="38" />
+            <state relative-caret-position="157">
+              <caret line="379" column="8" lean-forward="false" selection-start-line="379" selection-start-column="8" selection-end-line="379" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -63,12 +57,34 @@
       <file leaf-file-name="lyric_crawler.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lyric_crawler.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2730">
-              <caret line="192" column="22" lean-forward="true" selection-start-line="192" selection-start-column="22" selection-end-line="192" selection-end-column="22" />
+            <state relative-caret-position="180">
+              <caret line="122" column="43" lean-forward="true" selection-start-line="122" selection-start-column="43" selection-end-line="122" selection-end-column="43" />
               <folding>
                 <element signature="e#42#58#0" expanded="true" />
-                <marker date="1506520625864" expanded="true" signature="7207:7520" ph="..." />
+                <marker date="1506682591575" expanded="true" signature="7785:8098" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="one_singer_crawler.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/one_singer_crawler.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="592">
+              <caret line="102" column="13" lean-forward="true" selection-start-line="102" selection-start-column="13" selection-end-line="102" selection-end-column="13" />
+              <folding>
+                <element signature="e#43#58#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/Program Files/Python/Lib/logging/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="130">
+              <caret line="1638" column="4" lean-forward="false" selection-start-line="1638" selection-start-column="4" selection-end-line="1638" selection-end-column="4" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -76,8 +92,8 @@
       <file leaf-file-name="all_singer_cache.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/all_singer_cache.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" column="8" lean-forward="false" selection-start-line="9" selection-start-column="8" selection-end-line="9" selection-end-column="8" />
+            <state relative-caret-position="201">
+              <caret line="26" column="123" lean-forward="false" selection-start-line="26" selection-start-column="112" selection-end-line="26" selection-end-column="123" />
               <folding />
             </state>
           </provider>
@@ -86,18 +102,8 @@
       <file leaf-file-name="element.py" pinned="false" current-in-tab="false">
         <entry file="file://C:/Program Files/Python/Lib/site-packages/bs4/element.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19485">
-              <caret line="1304" column="68" lean-forward="false" selection-start-line="1304" selection-start-column="68" selection-end-line="1304" selection-end-column="68" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/Program Files/Python/Lib/site-packages/requests/api.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="900">
-              <caret line="60" column="36" lean-forward="false" selection-start-line="60" selection-start-column="36" selection-end-line="60" selection-end-column="36" />
+            <state relative-caret-position="248">
+              <caret line="1297" column="8" lean-forward="false" selection-start-line="1297" selection-start-column="8" selection-end-line="1297" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -106,7 +112,7 @@
       <file leaf-file-name="singer_cache.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/singer_cache.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
+            <state relative-caret-position="157">
               <caret line="16" column="55" lean-forward="false" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
               <folding />
             </state>
@@ -116,8 +122,8 @@
       <file leaf-file-name="lyric_cache.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lyric_cache.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="222">
-              <caret line="67" column="12" lean-forward="true" selection-start-line="67" selection-start-column="12" selection-end-line="67" selection-end-column="12" />
+            <state relative-caret-position="197">
+              <caret line="110" column="77" lean-forward="false" selection-start-line="110" selection-start-column="69" selection-end-line="110" selection-end-column="77" />
               <folding />
             </state>
           </provider>
@@ -134,36 +140,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>X：</find>
-      <find>by</find>
-      <find>唐僧</find>
-      <find>题字</find>
-      <find>Faye</find>
-      <find>PGM</find>
-      <find>Saikon</find>
-      <find>(筝)</find>
-      <find>KG</find>
-      <find>和</find>
-      <find>pv</find>
-      <find>delete_short_lrc</find>
-      <find>crawl_top_song_lyric</find>
-      <find>505844957</find>
-      <find>True</find>
-      <find>505818137</find>
-      <find>id</find>
-      <find>remove_authors</find>
-      <find>author_dict</find>
       <find>a_dict</find>
-      <find>remove_aside</find>
       <find>clear_lyric</find>
       <find>remove_punctuation</find>
       <find>remove_non_chinese_line</find>
       <find>is_continuous_chinese_str</find>
       <find>like_song_title_line</find>
       <find>is_chinese_str</find>
-      <find>has_no_chinese</find>
       <find>502238555</find>
       <find>remove_text_before_colon</find>
+      <find>download_lrc</find>
+      <find>sorted</find>
+      <find>crawl_proxies</find>
+      <find>remove_aside</find>
+      <find>has_no_chinese</find>
+      <find>has_special_char</find>
+      <find>has_special_char_1</find>
+      <find>replace_space_with_line_break</find>
+      <find>remove_nonsense_eng_word</find>
+      <find>remove_line_end_with_english</find>
+      <find>no</find>
+      <find>clean_lyric</find>
+      <find>remove_line_end_with_english_and_repeated_line</find>
+      <find>delete_short_lrc</find>
+      <find>is_good_song</find>
+      <find>get_all_albums</find>
+      <find>useful_proxies</find>
+      <find>logging</find>
+      <find>proxies</find>
+      <find>id</find>
+      <find>test_proxy</find>
     </findStrings>
     <replaceStrings>
       <replace>1</replace>
@@ -186,13 +192,13 @@
         <option value="$PROJECT_DIR$/singer_crawler.py" />
         <option value="$PROJECT_DIR$/pattern_test.py" />
         <option value="$PROJECT_DIR$/all_singer_crawler.py" />
-        <option value="$PROJECT_DIR$/one_singer_lyric_cache.py" />
-        <option value="$PROJECT_DIR$/one_singer_crawler.py" />
-        <option value="$PROJECT_DIR$/all_singer_cache.py" />
         <option value="$PROJECT_DIR$/keys.txt" />
-        <option value="$PROJECT_DIR$/lyric_crawler.py" />
+        <option value="$PROJECT_DIR$/all_singer_cache.py" />
+        <option value="$PROJECT_DIR$/one_singer_lyric_cache.py" />
         <option value="$PROJECT_DIR$/lyric_cache.py" />
         <option value="$PROJECT_DIR$/lyric_cleaner.py" />
+        <option value="$PROJECT_DIR$/lyric_crawler.py" />
+        <option value="$PROJECT_DIR$/one_singer_crawler.py" />
       </list>
     </option>
   </component>
@@ -220,7 +226,7 @@
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -233,7 +239,21 @@
       <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="test1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="test1" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../pinyin.py" />
@@ -257,24 +277,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.lyric_cleaner">
-    <configuration name="all_singer_cache" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="test1" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/all_singer_cache.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
+  <component name="RunManager" selected="Python.one_singer_crawler">
     <configuration name="all_singer_crawler" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -343,20 +346,37 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
+    <configuration name="one_singer_lyric_cache" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="test1" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/one_singer_lyric_cache.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.lyric_crawler" />
       <item index="1" class="java.lang.String" itemvalue="Python.all_singer_crawler" />
-      <item index="2" class="java.lang.String" itemvalue="Python.all_singer_cache" />
-      <item index="3" class="java.lang.String" itemvalue="Python.one_singer_crawler" />
-      <item index="4" class="java.lang.String" itemvalue="Python.lyric_cleaner" />
+      <item index="2" class="java.lang.String" itemvalue="Python.one_singer_crawler" />
+      <item index="3" class="java.lang.String" itemvalue="Python.lyric_cleaner" />
+      <item index="4" class="java.lang.String" itemvalue="Python.one_singer_lyric_cache" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.lyric_cleaner" />
+        <item index="0" class="java.lang.String" itemvalue="Python.one_singer_crawler" />
         <item index="1" class="java.lang.String" itemvalue="Python.lyric_crawler" />
-        <item index="2" class="java.lang.String" itemvalue="Python.one_singer_crawler" />
-        <item index="3" class="java.lang.String" itemvalue="Python.all_singer_crawler" />
-        <item index="4" class="java.lang.String" itemvalue="Python.all_singer_cache" />
+        <item index="2" class="java.lang.String" itemvalue="Python.lyric_cleaner" />
+        <item index="3" class="java.lang.String" itemvalue="Python.one_singer_lyric_cache" />
+        <item index="4" class="java.lang.String" itemvalue="Python.all_singer_crawler" />
       </list>
     </recent_temporary>
   </component>
@@ -479,21 +499,28 @@
       <option name="project" value="LOCAL" />
       <updated>1506520865581</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="improve strategy">
+      <created>1506602789481</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1506602789482</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17352185" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12275064" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3980447" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282123" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2555866" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17673522" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20810056" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20758355" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.424581" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -510,19 +537,19 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282123" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26536313" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36173186" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17352185" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12275064" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3980447" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20758355" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29748604" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.424581" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
@@ -544,7 +571,8 @@
     <MESSAGE value="improve code" />
     <MESSAGE value="proxy test" />
     <MESSAGE value="add strategy of removing author info" />
-    <option name="LAST_COMMIT_MESSAGE" value="add strategy of removing author info" />
+    <MESSAGE value="improve strategy" />
+    <option name="LAST_COMMIT_MESSAGE" value="improve strategy" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -553,14 +581,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/all_singer_cache.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="705">
-          <caret line="47" column="30" lean-forward="false" selection-start-line="47" selection-start-column="19" selection-end-line="47" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/one_singer_lyric_cache.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
@@ -800,20 +820,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/one_singer_crawler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="18" column="63" lean-forward="false" selection-start-line="18" selection-start-column="63" selection-end-line="18" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/one_singer_lyric_cache.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="14" column="45" lean-forward="false" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2017.2/system/python_stubs/1879517127/exceptions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="169">
@@ -851,22 +857,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Program Files/Python/Lib/site-packages/MySQLdb/cursors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2550">
-          <caret line="171" column="38" lean-forward="false" selection-start-line="171" selection-start-column="38" selection-end-line="171" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files/Python/Lib/site-packages/bs4/element.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19485">
-          <caret line="1304" column="68" lean-forward="false" selection-start-line="1304" selection-start-column="68" selection-end-line="1304" selection-end-column="68" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Program Files/Python/Lib/encodings/utf_8.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="390">
@@ -874,44 +864,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/keys.txt">
+    <entry file="file://$PROJECT_DIR$/one_singer_lyric_cache.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
-          <caret line="17" column="7" lean-forward="false" selection-start-line="17" selection-start-column="7" selection-end-line="17" selection-end-column="7" />
+          <caret line="17" column="44" lean-forward="true" selection-start-line="17" selection-start-column="44" selection-end-line="17" selection-end-column="44" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/all_singer_cache.py">
+    <entry file="file://$PROJECT_DIR$/keys.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="8" lean-forward="false" selection-start-line="9" selection-start-column="8" selection-end-line="9" selection-end-column="8" />
+        <state relative-caret-position="300">
+          <caret line="20" column="6" lean-forward="true" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="6" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lyric_crawler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2730">
-          <caret line="192" column="22" lean-forward="true" selection-start-line="192" selection-start-column="22" selection-end-line="192" selection-end-column="22" />
-          <folding>
-            <element signature="e#42#58#0" expanded="true" />
-            <marker date="1506520625864" expanded="true" signature="7207:7520" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2017.2/system/python_stubs/1879517127/__builtin__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="82">
-          <caret line="1984" column="12" lean-forward="true" selection-start-line="1984" selection-start-column="12" selection-end-line="1984" selection-end-column="12" />
+        <state relative-caret-position="230">
+          <caret line="527" column="4" lean-forward="false" selection-start-line="527" selection-start-column="4" selection-end-line="527" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Program Files/Python/Lib/site-packages/bs4/element.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="1297" column="8" lean-forward="false" selection-start-line="1297" selection-start-column="8" selection-end-line="1297" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Program Files/Python/Lib/site-packages/MySQLdb/cursors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="379" column="8" lean-forward="false" selection-start-line="379" selection-start-column="8" selection-end-line="379" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/singer_cache.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
+        <state relative-caret-position="157">
           <caret line="16" column="55" lean-forward="false" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
           <folding />
         </state>
@@ -919,18 +914,55 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lyric_cache.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="67" column="12" lean-forward="true" selection-start-line="67" selection-start-column="12" selection-end-line="67" selection-end-column="12" />
+        <state relative-caret-position="197">
+          <caret line="110" column="77" lean-forward="false" selection-start-line="110" selection-start-column="69" selection-end-line="110" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Program Files/Python/Lib/logging/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="1638" column="4" lean-forward="false" selection-start-line="1638" selection-start-column="4" selection-end-line="1638" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/all_singer_cache.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="26" column="123" lean-forward="false" selection-start-line="26" selection-start-column="112" selection-end-line="26" selection-end-column="123" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lyric_cleaner.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="207" column="40" lean-forward="false" selection-start-line="207" selection-start-column="40" selection-end-line="207" selection-end-column="40" />
+        <state relative-caret-position="195">
+          <caret line="440" column="17" lean-forward="true" selection-start-line="440" selection-start-column="17" selection-end-line="440" selection-end-column="17" />
           <folding>
             <element signature="e#43#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lyric_crawler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="122" column="43" lean-forward="true" selection-start-line="122" selection-start-column="43" selection-end-line="122" selection-end-column="43" />
+          <folding>
+            <element signature="e#42#58#0" expanded="true" />
+            <marker date="1506682591575" expanded="true" signature="7785:8098" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/one_singer_crawler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="592">
+          <caret line="102" column="13" lean-forward="true" selection-start-line="102" selection-start-column="13" selection-end-line="102" selection-end-column="13" />
+          <folding>
+            <element signature="e#43#58#0" expanded="true" />
           </folding>
         </state>
       </provider>

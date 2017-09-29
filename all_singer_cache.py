@@ -5,7 +5,7 @@ import MySQLdb
 
 
 class AllSingerCache:
-    __table_name = 'all_singers'
+    __table_name = 'singers'
 
     def __init__(self):
         self.__conn = MySQLdb.connect(host='localhost', user='username', passwd='password', db='musicdb',

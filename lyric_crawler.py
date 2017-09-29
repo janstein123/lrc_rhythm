@@ -12,37 +12,26 @@ from singer_cache import SingerCache
 from all_singer_cache import AllSingerCache
 from bs4 import BeautifulSoup
 
-useful_proxies = (
-    'http://219.135.164.245:3128',
-    # 'http://61.160.208.222:8080',
-    'http://122.72.32.83:80',
-    'http://118.31.103.7:3128',
-    'http://119.23.161.182:3128',
-    'http://139.224.24.26:8888',
-    'http://42.202.130.246:3128',
-    'http://222.222.169.60:53281',
-    'http://124.232.148.7:3128',
-    'http://61.158.111.142:53281',
-    'http://222.89.112.48:53281',
-    'http://58.255.45.23:9000',
-    'http://119.90.248.245:9999',
-    'http://116.236.151.166:8080',
-    'http://113.108.204.74:8888',
-    'http://58.17.116.115:53281',
-    'http://115.233.210.218:808',
-)
-proxies = {
-    'https': 'http://220.248.207.105:53281',
-    'http': 'http://110.73.7.165:8123',
+useful_proxies = [
+    ['http://218.15.25.153:808', True],
+    ['http://42.202.130.246:3128', True],
+    ['http://124.232.148.7:3128', True],
+    ['http://183.30.197.30:9797', True],
+    ['http://113.124.92.254:808', True],
+    ['http://120.78.15.63:80', True],
+]
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.3',
+    # 'Referer': 'http://www.xicidaili.com/'
 }
+
+test_id = 186016
 
 
 def crawl_proxies():
     url_prefix = 'http://www.xicidaili.com/wn/'
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.3',
-        # 'Referer': 'http://www.xicidaili.com/'
-    }
+
     proxies = []
     for page in range(2):
         url = url_prefix + str(page + 1)
@@ -60,42 +49,58 @@ def crawl_proxies():
                 proxies.append(proxy)
 
     print len(proxies)
+    test_proxy(proxies)
+
+
+# useful_proxies = crawl_proxies()
+
+def test_proxy(proxies=[]):
     url = 'https://music.163.com/api/song/lyric'
     proxies_ok = []
+
+    def test_3_times():
+        success_time = 0
+        all_time_consumed = 0
+        for i in range(3):
+            try:
+                t = time.time()
+                response = requests.get(url, params={'id': test_id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers,
+                                        timeout=3,
+                                        verify=True,
+                                        proxies={'https': proxy})
+                # print response.headers
+                time_consumed = time.time() - t
+                all_time_consumed += time_consumed
+                print response.status_code
+                if response.status_code == 200:
+                    print 'SUCCESS', time_consumed, 'sec', 'count:', i + 1
+                    success_time += 1
+                else:
+                    print 'FAILED', 'count:', i + 1
+
+            except Exception as e:
+                print e
+                print 'FAILED', 'count:', i + 1
+
+        return success_time, 0 if success_time == 0 else (all_time_consumed / success_time)
+
     for proxy in proxies:
         print proxy
-        try:
-            t = time.time()
-            response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers, timeout=10,
-                                    verify=False,
-                                    proxies={'https': proxy})
-            # print response.headers
-            print 'SUCCESS', time.time() - t, 'sec'
-            proxies_ok.append(proxy)
-        except Exception as e:
-            # print e
-            print 'FAILED'
+        # count_and_time = test_3_times()
+        # s_time, tc = count_and_time[0], count_and_time[1]
+        s_time, tc = test_3_times()
+        print s_time, "time successs", 'consumed ', tc, 'sec'
+        if s_time >= 2 and tc < 1:
+            proxies_ok.append([proxy, True, tc])
+
     print '-------------------------all', len(proxies_ok), 'useful proxies------------------------------'
+    proxies_ok = sorted(proxies_ok, key=lambda a: a[2])
     for proxy in proxies_ok:
         print proxy
+    return proxies_ok
 
 
-# crawl_proxies()
-
-
-def test_proxy():
-    url = 'http://ip.chinaz.com'
-    try:
-        response = requests.get(url, timeout=10, proxies=proxies)
-        soup = BeautifulSoup(response.text, 'lxml')
-        my_ip = soup.find('p', attrs={'class': 'getlist pl10'})
-        print response.text
-        print my_ip
-    except Exception as e:
-        print 'test_proxy', e
-
-
-# test_proxy()
+# test_proxy(useful_proxies)
 
 
 def download_lrc(id):
@@ -103,20 +108,29 @@ def download_lrc(id):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'}
     for i in range(len(useful_proxies)):
+        if not useful_proxies[i][1]:
+            continue
         try:
             t = time.time()
-            response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers, timeout=5,
-                                    verify=False,
-                                    proxies={'https': useful_proxies[i]})
-            print 'via proxy', i, useful_proxies[i], response.status_code, time.time() - t
+            response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers, timeout=3,
+                                    verify=True,
+                                    proxies={'https': useful_proxies[i][0]})
+            print 'via proxy', i, useful_proxies[i][0], response.status_code, time.time() - t
             if response.status_code != 200:
+                useful_proxies[i][1] = False
                 continue
         except Exception as e:
             if i < len(useful_proxies) - 1:
                 continue
             else:
-                print 'via 163'
-                response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers)
+                try:
+                    t = time.time()
+                    response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers)
+                    print 'via 163', time.time() - t
+                except Exception as e:
+                    print e
+                    download_lrc(id)
+                    return
         # print response.headers
         # print response.content
         rep_dict = response.json()
@@ -130,6 +144,7 @@ def download_lrc(id):
         except KeyError as e:
             print '2 key error', e
             return None
+
 
 # print download_lrc(29393117)
 

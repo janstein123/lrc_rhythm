@@ -20,7 +20,8 @@ class LyricCache:
                   'singer_id INT, '
                   'singer_name VARCHAR(128), '
                   'lyricist VARCHAR(128), '
-                  'lyric TEXT NOT NULL);')
+                  'lyric TEXT NOT NULL, '
+                  'lrc_lines TEXT );')
         c.close()
 
     def insert(self, song_id, lyric, song_name=None, singer_id=0, singer_name=None, lyricist=None):
@@ -67,7 +68,21 @@ class LyricCache:
         c = self.__conn.cursor()
         try:
             c.execute('SELECT song_id, song_name, singer_name, lyric from ' + self.__table_name)
-            # c.execute('SELECT song_id, song_name, singer_name, lyric from ' + self.__table_name+' where song_id = 506965056')
+            # c.execute(
+            #     'SELECT song_id, song_name, singer_name, lyric FROM ' + self.__table_name + ' WHERE song_id = 248097')
+            self.__conn.commit()
+            return c.fetchall()
+        except MySQLdb.Error as e:
+            print 'query_name:' + str(e)
+            return None
+
+    def query_all_lines(self):
+        c = self.__conn.cursor()
+        try:
+            c.execute('SELECT song_id, song_name, singer_name, lines from ' + self.__table_name)
+            # sql = 'SELECT song_id, song_name, singer_name, lrc_lines FROM ' + self.__table_name + ' WHERE song_id = 248097'
+            # print sql
+            c.execute(sql)
             self.__conn.commit()
             return c.fetchall()
         except MySQLdb.Error as e:
@@ -90,3 +105,14 @@ class LyricCache:
             self.__conn.commit()
         except MySQLdb.Error as e:
             print 'delete_songs:' + str(e)
+
+    def update_lines(self, sid, line_txt):
+        c = self.__conn.cursor()
+        sql = "UPDATE " + self.__table_name + " SET lrc_lines = '" + line_txt + "' WHERE song_id = " + str(
+            sid)
+        # print sql
+        try:
+            c.execute(sql)
+            self.__conn.commit()
+        except MySQLdb.Error as e:
+            print 'update_lines:' + str(e)
