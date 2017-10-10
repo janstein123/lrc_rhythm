@@ -80,7 +80,7 @@ def get_all_songs_of_singer(artist_id, artist_name):
         aid = albums[i][0]
         album_name = albums[i][1]
         print '--------', aid, album_name, artist_name, '--------'
-        p = re.compile(u'音乐会|演唱会|精选|live|现场录音|世界巡回|concert', re.I)
+        p = re.compile(u'音乐会|演唱会|精选|严选|live|现场录音|世界巡回|concert|tour', re.I)
         if re.search(p, album_name):
             print 'ignore this album...'
             continue
