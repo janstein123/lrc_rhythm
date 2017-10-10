@@ -93,7 +93,7 @@ def test_proxy(proxies=[]):
         print proxy
     return proxies_ok
 
-crawl_proxies()
+# crawl_proxies()
 
 # test_proxy(useful_proxies)
 
