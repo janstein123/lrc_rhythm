@@ -54,6 +54,10 @@ def get_songs_in_album(album_id):
 lrc_db = OneSingerCache('all_songs_of_top_singer')
 
 
+def has_this_album(album_id):
+    return lrc_db.query_album(album_id) is not None
+
+
 def get_all_songs_of_singer(artist_id, artist_name):
     # db = OneSingerCache('singer' + str(artist_id))
     albums = get_all_albums(artist_id)
@@ -61,26 +65,32 @@ def get_all_songs_of_singer(artist_id, artist_name):
     for i in range(len(albums)):
         aid = albums[i][0]
         album_name = albums[i][1]
-        print '--------', aid, album_name, artist_name, str(i + 1) + '/' + str(len(albums)), '--------'
+        print '--------', aid, album_name, artist_name, '--------'
         p = re.compile(u'音乐会|演唱会|精选|live|现场录音|世界巡回|concert', re.I)
         if re.search(p, album_name):
             print 'ignore this album...'
             continue
+
         songs = get_songs_in_album(aid)
         lyric_list = []
+        j = 0
         for sid in songs.keys():
             song_name = songs[sid]
+            print threading.currentThread().getName(), "downloading.....", artist_id, artist_name, sid, song_name, str(
+                j + 1) + '/' + str(len(songs.keys())), str(i + 1) + '/' + str(len(albums)), '.............'
             lyric_text = lyric_crawler.download_lrc(sid)
-            print "downloaded.....", artist_id, artist_name, sid, song_name, '.............'
-            print ''
             if lyric_text is not None:
                 # lrc_author = lyric_crawler.find_author(lyric_text)
                 lyric_list.append((int(sid), song_name, artist_id, artist_name, aid, album_name, lyric_text))
+                print 'dl OK'
             else:
                 print 'lyric is none'
+            j = j + 1
+
         if len(lyric_list) > 0:
+            print '************** saving', aid, album_name, artist_name, ' **************'
             lrc_db.insert_many(lyric_list)
-            print '**************', aid, album_name, artist_name, 'saved **************'
+            print artist_name, album_name, 'save OK'
 
 
 singer_db = AllSingerCache()
@@ -95,8 +105,10 @@ def crawl_run(thread_index):
         singer = top_singers[i]
         sid = singer[0]
         sname = singer[1]
-        # print sid, sname
-        if (thread_index == 0 and sid >= 4723) or (thread_index == 1 and sid >= 4813) or (thread_index == 2 and sid >= 5346):
+        # if sname == u'王杰' or sname == u'汪峰' or sname == u'谭咏麟':
+        #     print sid, sname
+        if (thread_index == 0 and sid >= 6456) or (thread_index == 1 and sid >= 5768) or (
+                thread_index == 2 and sid >= 6454):
             get_all_songs_of_singer(sid, sname)
 
 

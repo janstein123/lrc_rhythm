@@ -13,12 +13,7 @@ from all_singer_cache import AllSingerCache
 from bs4 import BeautifulSoup
 
 useful_proxies = [
-    ['http://218.15.25.153:808', True],
-    ['http://42.202.130.246:3128', True],
     ['http://124.232.148.7:3128', True],
-    ['http://183.30.197.30:9797', True],
-    ['http://113.124.92.254:808', True],
-    ['http://120.78.15.63:80', True],
 ]
 
 headers = {
@@ -52,8 +47,6 @@ def crawl_proxies():
     test_proxy(proxies)
 
 
-# useful_proxies = crawl_proxies()
-
 def test_proxy(proxies=[]):
     url = 'https://music.163.com/api/song/lyric'
     proxies_ok = []
@@ -86,11 +79,12 @@ def test_proxy(proxies=[]):
 
     for proxy in proxies:
         print proxy
+        proxy = proxy[0]
         # count_and_time = test_3_times()
         # s_time, tc = count_and_time[0], count_and_time[1]
         s_time, tc = test_3_times()
         print s_time, "time successs", 'consumed ', tc, 'sec'
-        if s_time >= 2 and tc < 1:
+        if s_time >= 2:
             proxies_ok.append([proxy, True, tc])
 
     print '-------------------------all', len(proxies_ok), 'useful proxies------------------------------'
@@ -99,6 +93,7 @@ def test_proxy(proxies=[]):
         print proxy
     return proxies_ok
 
+crawl_proxies()
 
 # test_proxy(useful_proxies)
 
