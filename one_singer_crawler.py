@@ -18,10 +18,7 @@ def get_all_albums(artist_id):
     albums = []
 
     def download_one_page(offset=0):
-        response = requests.get('http://music.163.com/artist/album', {'id': artist_id, 'limit': 12, 'offset': offset},
-                                verify=True,
-                                proxies={'http': lyric_crawler.useful_proxies[0][0]})
-        # print response.text
+        response = lyric_crawler.request('http://music.163.com/artist/album', {'id': artist_id, 'limit': 12, 'offset': offset})
         soup = BeautifulSoup(response.text, 'lxml')
         clazz = soup.find('ul', attrs={'class': 'm-cvrlst m-cvrlst-alb4 f-cb'})
         if clazz:
@@ -44,8 +41,7 @@ def get_all_albums(artist_id):
 
 def get_songs_in_album(album_id):
     songs = {}
-    response = requests.get('http://music.163.com/album', {'id': album_id}, verify=True,
-                            proxies={'http': lyric_crawler.useful_proxies[0][0]})
+    response = lyric_crawler.request('http://music.163.com/album', {'id': album_id})
     soup = BeautifulSoup(response.text, 'lxml')
     song_list = soup.find('div', attrs={'id': 'song-list-pre-cache'})
     if song_list:
@@ -91,11 +87,11 @@ def get_all_songs_of_singer(artist_id, artist_name):
         for sid in songs.keys():
             song_name = songs[sid]
             if not is_valid_song_name(song_name):
-                print threading.currentThread().getName(), "ignore.....", artist_id, artist_name, sid, song_name, str(
-                    j + 1) + '/' + str(len(songs.keys())), str(i + 1) + '/' + str(len(albums)), '.............'
+                print threading.currentThread().getName(), "ignore...", artist_id, artist_name, sid, song_name, str(
+                    j + 1) + '/' + str(len(songs.keys())), str(i + 1) + '/' + str(len(albums)), '-------------------'
                 continue
-            print threading.currentThread().getName(), "downloading.....", artist_id, artist_name, sid, song_name, str(
-                j + 1) + '/' + str(len(songs.keys())), str(i + 1) + '/' + str(len(albums)), '.............'
+            print threading.currentThread().getName(), "downloading...", artist_id, artist_name, sid, song_name, str(
+                j + 1) + '/' + str(len(songs.keys())), str(i + 1) + '/' + str(len(albums)), '++++++++++++++++++++'
             lyric_text = lyric_crawler.download_lrc(sid)
             if lyric_text is not None:
                 # lrc_author = lyric_crawler.find_author(lyric_text)
@@ -109,32 +105,31 @@ def get_all_songs_of_singer(artist_id, artist_name):
             print '************** saving', aid, album_name, artist_name, ' **************'
             lrc_db.insert_many(lyric_list)
             print artist_name, album_name, 'save OK'
-
+        else:
+            print 'album is empty, no songs to save'
 
 singer_db = AllSingerCache()
 top_singers = singer_db.query_all()
+new_singers = []
 
-# for i in range(0, len(top_singers), 3):
-#     singer = top_singers[i]
-#     singer2 = top_singers[i+1]
-#     singer3 = top_singers[i+2]
-#
-#     print singer[0], singer[1], singer2[0], singer2[1], singer3[0], singer3[1]
+for i in range(1, len(top_singers), 3):
+    if top_singers[i][0] > 12639:
+        new_singers.append([top_singers[i][0], top_singers[i][1]])
 
-thread_num = 3
+
+thread_num = 4
 
 
 def crawl_run(thread_index):
     print thread_index
-    for i in range(thread_index, len(top_singers), 3):
-        singer = top_singers[i]
+    for i in range(thread_index, len(new_singers), 4):
+        singer = new_singers[i]
         sid = singer[0]
         sname = singer[1]
-        # if sname == u'王杰' or sname == u'汪峰' or sname == u'谭咏麟':
-        #     print sid, sname
-        if (thread_index == 0 and sid >= 7220) or (thread_index == 1 and sid >= 7570) or (
-                        thread_index == 2 and sid >= 9292):
-            get_all_songs_of_singer(sid, sname)
+        print sid, sname
+        # if (thread_index == 0 and sid >= 9269) or (thread_index == 1 and sid >= 8614) or (
+        #                 thread_index == 2 and sid >= 11371):
+        get_all_songs_of_singer(sid, sname)
 
 
 for i in range(thread_num):

@@ -23,6 +23,7 @@ singers_to_del = [u'回音哥',
                   u'Robynn & Kendy',
                   u'Six City',
                   u'poppin 国王',
+                  u'霹雳英雄',
                   u'打扰一下乐团']
 
 

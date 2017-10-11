@@ -13,7 +13,16 @@ from all_singer_cache import AllSingerCache
 from bs4 import BeautifulSoup
 
 useful_proxies = [
-    ['http://124.232.148.7:3128', True],
+    ['http://124.232.148.7:3128', True, 0.29140000343322753, 10],
+    ['http://118.31.103.7:3128', True, 0.4494999647140503, 10],
+    ['http://39.88.13.3:53281', True, 0.4750000105963813, 9],
+    ['http://101.37.79.125:3128', True, 0.6138999938964844, 10],
+    ['http://115.233.210.218:808', True, 0.7549000263214112, 10],
+    ['http://221.229.252.98:8080', True, 1.1174000263214112, 5],
+    ['http://221.206.5.183:53281', True, 1.7516666650772095, 6],
+    ['http://121.43.178.58:3128', True, 1.848799991607666, 10],
+    ['http://116.11.254.37:80', True, 3.29699993134, 10],
+    ['http://61.160.208.222:8080', True, 5.305333296457927, 9],
 ]
 
 headers = {
@@ -41,20 +50,20 @@ def crawl_proxies():
                 port = tds[2].text.strip()
                 proxy = 'http://' + ip + ':' + port
                 # print proxy
-                proxies.append(proxy)
+                proxies.append([proxy, False])
 
     print len(proxies)
-    test_proxy(proxies)
+    test_proxy(proxies, 1)
 
 
-def test_proxy(proxies=[]):
+def test_proxy(proxies=[], times=1):
     url = 'https://music.163.com/api/song/lyric'
     proxies_ok = []
 
-    def test_3_times():
+    def test_repeatedly():
         success_time = 0
         all_time_consumed = 0
-        for i in range(3):
+        for n in range(times):
             try:
                 t = time.time()
                 response = requests.get(url, params={'id': test_id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers,
@@ -66,79 +75,86 @@ def test_proxy(proxies=[]):
                 all_time_consumed += time_consumed
                 print response.status_code
                 if response.status_code == 200:
-                    print 'SUCCESS', time_consumed, 'sec', 'count:', i + 1
+                    print 'SUCCESS', time_consumed, 'sec', 'count:', n + 1
                     success_time += 1
                 else:
-                    print 'FAILED', 'count:', i + 1
+                    print 'FAILED', 'count:', n + 1
 
             except Exception as e:
                 print e
-                print 'FAILED', 'count:', i + 1
+                print 'FAILED', 'count:', n + 1
 
         return success_time, 0 if success_time == 0 else (all_time_consumed / success_time)
 
-    for proxy in proxies:
-        print proxy
-        proxy = proxy[0]
-        # count_and_time = test_3_times()
+    for i in range(len(proxies)):
+        proxy = proxies[i][0]
+        print '[' + str(i + 1) + ']', proxy
+        # count_and_time = test_repeatedly()
         # s_time, tc = count_and_time[0], count_and_time[1]
-        s_time, tc = test_3_times()
+        s_time, tc = test_repeatedly()
         print s_time, "time successs", 'consumed ', tc, 'sec'
-        if s_time >= 2:
-            proxies_ok.append([proxy, True, tc])
+        if s_time >= 1:
+            proxies_ok.append([proxy, True, tc, s_time])
 
     print '-------------------------all', len(proxies_ok), 'useful proxies------------------------------'
     proxies_ok = sorted(proxies_ok, key=lambda a: a[2])
     for proxy in proxies_ok:
-        print proxy
+        print proxy, ','
     return proxies_ok
+
 
 # crawl_proxies()
 
-# test_proxy(useful_proxies)
+# test_proxy(useful_proxies, 10)
+def request(url, params={}, is_https=False, timeout=None):
+
+    for row in useful_proxies:
+        if not row[1]:
+            continue
+        proxy = row[0]
+        try:
+            t = time.time()
+            if is_https:
+                param_proxies = {'http': proxy}
+            else:
+                param_proxies = {'https': proxy}
+
+            response = requests.get(url, params=params, verify=is_https, proxies=param_proxies, timeout=timeout, headers=headers)
+            print 'via proxy', proxy, response.status_code, time.time() - t
+            if response.status_code != 200:
+                row[1] = False
+                continue
+            else:
+                return response
+        except Exception as e:
+            print proxy, e.message
+            continue
+
+    try:
+        t = time.time()
+        response = requests.get(url, params=params, timeout=timeout, headers=headers)
+        print 'via 163', time.time() - t
+        return response
+    except Exception as e:
+        request(url, params, is_https, timeout)
 
 
 def download_lrc(id):
     url = 'https://music.163.com/api/song/lyric'
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'}
-    for i in range(len(useful_proxies)):
-        if not useful_proxies[i][1]:
-            continue
-        try:
-            t = time.time()
-            response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers, timeout=3,
-                                    verify=True,
-                                    proxies={'https': useful_proxies[i][0]})
-            print 'via proxy', i, useful_proxies[i][0], response.status_code, time.time() - t
-            if response.status_code != 200:
-                useful_proxies[i][1] = False
-                continue
-        except Exception as e:
-            if i < len(useful_proxies) - 1:
-                continue
-            else:
-                try:
-                    t = time.time()
-                    response = requests.get(url, params={'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, headers=headers)
-                    print 'via 163', time.time() - t
-                except Exception as e:
-                    print e
-                    download_lrc(id)
-                    return
-        # print response.headers
-        # print response.content
-        rep_dict = response.json()
+    response = request(url, {'id': id, 'lv': 1, 'kv': 1, 'tv': -1}, True, 1)
+    # print response.headers
+    # print response.content
+    rep_dict = response.json()
 
-        try:
-            lrc = rep_dict["lrc"]["lyric"]
-            if len(lrc) < 50:
-                print 'lrc is too short'
-                return None
-            return lrc
-        except KeyError as e:
-            print '2 key error', e
+    try:
+        lrc = rep_dict["lrc"]["lyric"]
+        if len(lrc) < 50:
+            print 'lrc is too short'
             return None
+        return lrc
+    except KeyError as e:
+        print '2 key error', e
+        return None
 
 
 # print download_lrc(29393117)
