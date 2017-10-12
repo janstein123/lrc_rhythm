@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import MySQLdb
+import threading
 
 
 class LyricCache:
     __table_name = 'new_lyrics'
+    __lock = threading.Lock()
 
     def __init__(self):
         self.__conn = MySQLdb.connect(host='localhost', user='username', passwd='password', db='musicdb',
@@ -69,7 +71,7 @@ class LyricCache:
         try:
             c.execute('SELECT song_id, song_name, singer_name, lyric from ' + self.__table_name)
             # c.execute(
-            #     'SELECT song_id, song_name, singer_name, lyric FROM ' + self.__table_name + ' WHERE song_id = 248097')
+            #     'SELECT song_id, song_name, singer_name, lyric FROM ' + self.__table_name + ' WHERE song_id = 109848')
             self.__conn.commit()
             return c.fetchall()
         except MySQLdb.Error as e:
@@ -82,7 +84,7 @@ class LyricCache:
             c.execute('SELECT song_id, song_name, singer_name, lines from ' + self.__table_name)
             # sql = 'SELECT song_id, song_name, singer_name, lrc_lines FROM ' + self.__table_name + ' WHERE song_id = 248097'
             # print sql
-            c.execute(sql)
+            # c.execute(sql)
             self.__conn.commit()
             return c.fetchall()
         except MySQLdb.Error as e:
@@ -106,13 +108,16 @@ class LyricCache:
         except MySQLdb.Error as e:
             print 'delete_songs:' + str(e)
 
-    def update_lines(self, sid, line_txt):
+    def update_lines(self, lines=[]):
+        self.__lock.acquire()
         c = self.__conn.cursor()
-        sql = "UPDATE " + self.__table_name + " SET lrc_lines = '" + line_txt + "' WHERE song_id = " + str(
-            sid)
+        sql = "UPDATE " + self.__table_name + " SET lrc_lines = %s WHERE song_id = %s"
         # print sql
         try:
-            c.execute(sql)
+            rows = c.executemany(sql, lines)
             self.__conn.commit()
+            print rows, "rows updated"
         except MySQLdb.Error as e:
-            print 'update_lines:' + str(e)
+            print 'update_lines:', type(e), e
+        finally:
+            self.__lock.release()

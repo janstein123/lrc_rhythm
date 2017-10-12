@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import threading
 import urllib2
 import json
 import requests
@@ -68,8 +68,8 @@ def remove_non_lrc_line(sid, name, sname, lrc):
 
     pattern = re.compile(u'\n')
     lines = re.split(pattern, lrc)
-    if len(lines) < 4:
-        return None
+    # if len(lines) < 4:
+    #     return None
 
     new_lines = []
     # remove empty lines
@@ -171,8 +171,8 @@ def remove_non_lrc_line(sid, name, sname, lrc):
     if len(tail_to_del) > 0:
         end = tail_to_del[len(tail_to_del) - 1] - 1
 
-    # 小于四行忽略的歌词
-    if end - start + 1 < 4:
+    # 小于行忽略的歌词
+    if end - start + 1 < 1:
         # n = n + 1
         # print_title(sid, name)
         # print_lines(lines)
@@ -204,8 +204,8 @@ def remove_text_before_colon(sid, name, sname, lines=[]):
         else:
             new_lines.append(line)
 
-    if len(new_lines) < 4:
-        return None
+    # if len(new_lines) < 4:
+    #     return None
     return new_lines
 
 
@@ -218,10 +218,10 @@ def remove_aside(sid, name, lrc_lines=[]):
         if line.strip():
             new_lines.append(line)
 
-    if len(new_lines) < 4:
-        # print_title(sid, name)
-        # print_lines(new_lines)
-        return None
+    # if len(new_lines) < 4:
+    #     # print_title(sid, name)
+    #     # print_lines(new_lines)
+    #     return None
     return new_lines
 
 
@@ -318,18 +318,6 @@ def clean_lyric(sid, name, sname, raw_lrc):
                             return lines
 
     return None
-
-    # new_lrc = remove_time(raw_lrc)
-    # lines = remove_non_lrc_line(sid, name, sname, new_lrc)
-    # lines = remove_text_before_colon(sid, name, sname, lines)
-    # lines = remove_aside(sid, name, lines)
-    # lines = replace_space_with_line_break(sid, name, lines)
-
-    # lines = remove_non_chinese_line(sid, name, lines)
-    # new_lrc = remove_nonsense_eng_word(new_lrc)
-    # new_lrc = remove_line_end_with_english(new_lrc)
-
-    # line_list = remove_repeated_line(new_lrc)
 
 
 def get_rhythm(word):
@@ -428,24 +416,44 @@ def len_of_lines(lines=[]):
 
 
 def update_lines():
-    global n
     db = LyricCache()
     rows = db.query_all_lrc()
-    print len(rows), 'in db'
-    process = 0
-    for r in rows:
-        sid = r[0]
-        name = r[1]
-        sname = r[2]
-        lines = clean_lyric(sid, name, sname, r[3])
-        if lines:
-            n = n + 1
-            db.update_lines(sid, '\n'.join(lines))
-        process += 1
-        print sid, 'updated', process
+    total_len = len(rows)
+    print total_len, 'songs in db'
+    if total_len < 1:
+        return
+
+    def process_clean(rows_div):
+        part_len = len(rows_div)
+        process = 0
+        print threading.currentThread().getName(), "start", part_len, rows_div[0][0], rows_div[len(rows_div) - 1][0]
+        lines_list = []
+        for r in rows_div:
+            sid = r[0]
+            name = r[1]
+            sname = r[2]
+            lines = clean_lyric(sid, name, sname, r[3])
+            if lines:
+                lines_list.append(['\n'.join(lines), sid])
+            process += 1
+            print threading.currentThread().getName(), sid, name, sname, 'updated', str(process) + '/' + str(
+                part_len), ('%.2f%%' % (process / float(part_len) * 100))
+
+        db.update_lines(lines_list)
+        print threading.currentThread().getName(), "process completely", len(lines_list), '-------------------------------------------------------------------------------------------------------'
+
+    thread_num = 4
+    div_len = total_len / thread_num
+    for index in range(thread_num):
+        start = index * div_len
+        end = (index + 1) * div_len if index < thread_num - 1 else total_len
+        t = threading.Thread(target=process_clean, args=(rows[start: end],))
+        t.start()
+        time.sleep(0.1)
 
 
 update_lines()
+
 print n, m, j
 
 # new_dict = sorted(a_dict.items(), key=lambda a: a[1], reverse=True)
