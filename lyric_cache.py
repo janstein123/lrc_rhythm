@@ -81,7 +81,7 @@ class LyricCache:
     def query_all_lines(self):
         c = self.__conn.cursor()
         try:
-            c.execute('SELECT song_id, song_name, singer_name, lines from ' + self.__table_name)
+            c.execute('SELECT song_id, song_name, singer_name, lrc_lines from ' + self.__table_name)
             # sql = 'SELECT song_id, song_name, singer_name, lrc_lines FROM ' + self.__table_name + ' WHERE song_id = 248097'
             # print sql
             # c.execute(sql)
@@ -109,6 +109,9 @@ class LyricCache:
             print 'delete_songs:' + str(e)
 
     def update_lines(self, lines=[]):
+        if not lines:
+            print 'list is empty'
+            return
         self.__lock.acquire()
         c = self.__conn.cursor()
         sql = "UPDATE " + self.__table_name + " SET lrc_lines = %s WHERE song_id = %s"
