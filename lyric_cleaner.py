@@ -491,6 +491,7 @@ def remove_author_again():
                     num_to_del += 1
                     print line
             else:
+                # 有些歌曲将作者名称和人名连在一起，忘记了加标点隔开
                 flag = False
                 p = re.compile(u'作曲|作词|演唱|词曲|编曲|混音|编辑|封面设计')
                 if re.search(p, line):
@@ -513,11 +514,9 @@ def remove_repeated_songs():
     rows = db.query_all_lines()
     total_len = len(rows)
     print total_len, 'songs in db'
-    if total_len < 1:
-        return
+
     new_rows = []
     new_rows_no_id = []
-
     for row in rows:
         song_id = row[0]
         song_name = row[1]
