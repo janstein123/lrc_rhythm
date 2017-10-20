@@ -69,9 +69,9 @@ class LyricCache:
     def query_all_lrc(self):
         c = self.__conn.cursor()
         try:
-            c.execute('SELECT song_id, song_name, singer_name, lyric from ' + self.__table_name)
-            # c.execute(
-            #     'SELECT song_id, song_name, singer_name, lyric FROM ' + self.__table_name + ' WHERE song_id = 109848')
+            sql = 'SELECT song_id, song_name, singer_name, lyric from ' + self.__table_name
+            # sql = 'SELECT song_id, song_name, singer_name, lyric FROM ' + self.__table_name + ' WHERE song_id in ()'
+            c.execute(sql)
             self.__conn.commit()
             return c.fetchall()
         except MySQLdb.Error as e:

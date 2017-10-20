@@ -54,14 +54,14 @@ AUTHOR_NAMES_2 = (
     u'翻唱', u'副歌', u'念白', u'视频', u'独白', u'混缩', u'缩混' u'发行', u'配音', u'后期', u'作者', u'监制', u'配器', u'歌手', u'设备', u'策划',
     u'文案',
     u'出品', u'美工', u'鸣谢', u'笛箫', u'古筝', u'弦乐', u'二胡', u'琵琶', u'柳琴', u'长笛', u'笛子', u'录音', u'曲目', u'吉他', u'和声', u'钢琴',
-    u'海报')
+    u'海报', u'键盘', u'首席', u'编舞', u'和音', u'舞蹈')
 
 AUTHOR_NAMES_3 = (
     u'小提琴', u'中提琴', u'大提琴', u'录音棚', u'录音室', u'混音室', u'录音师', u'混音师', u'弦乐团', u'制作人', u'出品人', u'出品方', u'电吉他', u'演唱者',
-    u'专辑名', u'编曲唱',
+    u'专辑名', u'编曲唱', u'架子鼓', u'打击乐',
     u'曲编唱', u'词曲唱')
 
-AUTHOR_NAMES_4 = (u'封面设计', u'词曲编唱', u'游戏原著', u'伴奏混音')
+AUTHOR_NAMES_4 = (u'封面设计', u'词曲编唱', u'游戏原著', u'伴奏混音', u'舞蹈总监')
 
 
 def remove_time(lrc):
@@ -442,7 +442,7 @@ def update_lines():
         print threading.currentThread().getName(), "process completely", len(
             lines_list), '-------------------------------------------------------------------------------------------------------'
 
-    thread_num = 4
+    thread_num = 1
     div_len = total_len / thread_num
     for index in range(thread_num):
         start = index * div_len
@@ -515,21 +515,18 @@ def remove_repeated_songs():
     total_len = len(rows)
     print total_len, 'songs in db'
 
-    new_rows = []
-    new_rows_no_id = []
+    line_dict = {}
     for row in rows:
         song_id = row[0]
         song_name = row[1]
         singer_name = row[2]
         lrc_lines = row[3]
-        pre_1_line = lrc_lines.split(u'\n')[0]
-        print pre_1_line
-        new_row = [song_id, song_name, singer_name, lrc_lines.split(u'\n')[0]]
-        new_row_no_id = [song_name, lrc_lines.split(u'\n')[0]]
-        if new_row_no_id not in new_rows_no_id:
-            new_rows.append(new_row)
+        pre_2_lines = lrc_lines.split(u'\n')[0] + '|' + lrc_lines.split(u'\n')[1]
+        if pre_2_lines not in line_dict.keys():
+            line_dict[pre_2_lines] = song_id
         else:
-            print song_id, song_name, singer_name, lrc_lines.split(u'\n')[0]
+            print song_name, singer_name, pre_2_lines
+    print len(line_dict.keys())
 
 
 remove_repeated_songs()
