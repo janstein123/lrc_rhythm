@@ -70,7 +70,7 @@ class LyricCache:
         c = self.__conn.cursor()
         try:
             sql = 'SELECT song_id, song_name, singer_name, lyric from ' + self.__table_name
-            # sql = 'SELECT song_id, song_name, singer_name, lyric FROM ' + self.__table_name + ' WHERE song_id in ()'
+            # sql = 'SELECT song_id, song_name, singer_name, lyric FROM ' + self.__table_name + ' WHERE song_id in (506986353)'
             c.execute(sql)
             self.__conn.commit()
             return c.fetchall()
@@ -93,18 +93,11 @@ class LyricCache:
 
     def delete_songs(self, ids):
         c = self.__conn.cursor()
-        # s = '('
-        # for i in range(len(ids)):
-        #     s = s + str(ids[i])
-        #     if i == len(ids) - 1:
-        #         s = s + ')'
-        #     else:
-        #         s = s + ','
-        # print s
         sql = "DELETE FROM " + self.__table_name + " WHERE song_id = %s"
         try:
-            c.executemany(sql, ids)
+            rows = c.executemany(sql, ids)
             self.__conn.commit()
+            print rows, 'songs deleted'
         except MySQLdb.Error as e:
             print 'delete_songs:' + str(e)
 

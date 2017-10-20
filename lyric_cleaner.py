@@ -49,7 +49,7 @@ AUTHOR_NAMES_1 = (u'词', u'曲', u'编', u'鼓', u'白', u'监', u'詞', u'混'
 
 AUTHOR_NAMES_2 = (
     u'作词', u'作曲', u'编曲', u'词曲', u'演唱', u'合声', u'伴唱', u'混音', u'母带', u'制作', u'童音', u'微博', u'编排', u'手绘', u'填词', u'原曲',
-    u'哼唱',
+    u'哼唱', u'发行', u'配唱', u'声编'
     u'原唱',
     u'翻唱', u'副歌', u'念白', u'视频', u'独白', u'混缩', u'缩混' u'发行', u'配音', u'后期', u'作者', u'监制', u'配器', u'歌手', u'设备', u'策划',
     u'文案',
@@ -58,7 +58,7 @@ AUTHOR_NAMES_2 = (
 
 AUTHOR_NAMES_3 = (
     u'小提琴', u'中提琴', u'大提琴', u'录音棚', u'录音室', u'混音室', u'录音师', u'混音师', u'弦乐团', u'制作人', u'出品人', u'出品方', u'电吉他', u'演唱者',
-    u'专辑名', u'编曲唱', u'架子鼓', u'打击乐',
+    u'专辑名', u'编曲唱', u'架子鼓', u'打击乐', u'发行日',
     u'曲编唱', u'词曲唱')
 
 AUTHOR_NAMES_4 = (u'封面设计', u'词曲编唱', u'游戏原著', u'伴奏混音', u'舞蹈总监')
@@ -201,8 +201,9 @@ def print_title(sid, name):
     print '----------------------', sid, name, '----------------------'
 
 
-def remove_text_before_colon(sid, name, sname, lines=[]):
-    global n, m
+def remove_text_before_colon(lines=[]):
+    if not lines:
+        return None
     new_lines = []
     p = re.compile(u'.+[:：]')
     for line in lines:
@@ -213,13 +214,13 @@ def remove_text_before_colon(sid, name, sname, lines=[]):
         else:
             new_lines.append(line)
 
-    # if len(new_lines) < 4:
-    #     return None
     return new_lines
 
 
-def remove_aside(sid, name, lrc_lines=[]):
+def remove_aside(lrc_lines=[]):
     # pattern = re.compile(u"(\(.+\))|(（.+）)")
+    if not lrc_lines:
+        return None
     new_lines = []
     pattern = re.compile(u"[(（].+?[)）]")
     for line in lrc_lines:
@@ -227,10 +228,6 @@ def remove_aside(sid, name, lrc_lines=[]):
         if line.strip():
             new_lines.append(line)
 
-    # if len(new_lines) < 4:
-    #     # print_title(sid, name)
-    #     # print_lines(new_lines)
-    #     return None
     return new_lines
 
 
@@ -250,7 +247,7 @@ def remove_non_chinese_line(sid, name, lines=[]):
     return lines
 
 
-def replace_space_with_line_break(sid, name, lines=[]):
+def replace_space_with_line_break(lines=[]):
     if not lines:
         return None
     global m
@@ -276,6 +273,8 @@ def replace_space_with_line_break(sid, name, lines=[]):
 
 
 def remove_nonsense_eng_word(lines=[]):
+    if not lines:
+        return None
     pattern = re.compile(u'(yeah|wo+|wooh|oh|wu|o+)$', re.I)
     new_lines = []
     for line in lines:
@@ -285,8 +284,9 @@ def remove_nonsense_eng_word(lines=[]):
     return new_lines
 
 
-def remove_line_end_with_english_and_repeated_line(sid, name, lines=[]):
-    global n
+def remove_line_end_with_english_and_repeated_line(lines=[]):
+    if not lines:
+        return
     pattern = re.compile(u'.*[a-zA-Z]+$')
     new_lines = []
     for line in lines:
@@ -299,91 +299,55 @@ def remove_line_end_with_english_and_repeated_line(sid, name, lines=[]):
     return new_lines
 
 
+# 发现有很多歌词的前面几行还是有包含作词作曲演唱这些信息存在，需要去除
+def remove_author_again(lines=[]):
+    if not lines:
+        return None
+    num_to_del = 0
+    flag = False
+    for i in range(0, len(lines)):
+        if flag:
+            flag = False
+            continue
+        line = lines[i]
+
+        if line in AUTHOR_NAMES_1 or line in AUTHOR_NAMES_2 or line in AUTHOR_NAMES_3 or line in AUTHOR_NAMES_4:
+
+            # 考虑两个作者名称连续的情况
+            try:
+                next_line = lines[i + 1]
+                if next_line in AUTHOR_NAMES_1 or next_line in AUTHOR_NAMES_2 or next_line in AUTHOR_NAMES_3 or next_line in AUTHOR_NAMES_4:
+                    num_to_del += 1
+                else:
+                    flag = True
+                    num_to_del += 2
+            except IndexError:
+                num_to_del += 1
+        else:
+            # 有些歌曲将作者名称和人名连在一起，忘记了加标点隔开
+            p = re.compile(u'作曲|作词|演唱|词曲|编曲|混音|编辑|封面设计')
+            if re.search(p, line):
+                num_to_del += 1
+            else:
+                break
+    return lines[num_to_del:]
+
+
 def clean_lyric(sid, name, sname, raw_lrc):
     # print raw_lrc
     if raw_lrc:
         new_lrc = remove_time(raw_lrc)
         if new_lrc:
             lines = remove_non_lrc_line(sid, name, sname, new_lrc)
-            if lines:
-                lines = remove_text_before_colon(sid, name, sname, lines)
-                if lines:
-                    lines = remove_aside(sid, name, lines)
-                    if lines:
-                        lines = replace_space_with_line_break(sid, name, lines)
-                        if lines:
-                            lines = remove_nonsense_eng_word(lines)
-                            lines = remove_line_end_with_english_and_repeated_line(sid, name, lines)
-                            return lines
-
+            lines = remove_text_before_colon(lines)
+            lines = remove_aside(lines)
+            lines = replace_space_with_line_break(lines)
+            lines = remove_nonsense_eng_word(lines)
+            lines = remove_line_end_with_english_and_repeated_line(lines)
+            lines = remove_author_again(lines)
+            return lines
     return None
 
-
-def get_rhythm(word):
-    p = re.compile('^(zh|ch|sh|[bpmfdtnlgkhjqxzcsryw])')
-    rhythm = re.sub(p, '', word)
-    return rhythm
-
-
-def analyze_rhythm_result(lyric_lines=[]):
-    if len(lyric_lines) < 2:
-        return None
-
-    lyric_ab_lines = [1] * len(lyric_lines)
-
-    ab = alphabet.alphabet()
-    for i in range(len(lyric_lines)):
-        line_ab = ab.chinese2ab(lyric_lines[i])
-        lyric_ab_lines[i] = line_ab
-        # print lyric_lines[i]
-        # print line_ab
-    result = [[] for rows in range(RHYTHM_NUM)]
-
-    for i in range(1, len(lyric_ab_lines)):
-        last_last_ab = lyric_ab_lines[i - 2][-1] if i > 1 else None
-        last_ab = lyric_ab_lines[i - 1][-1]
-        current_ab = lyric_ab_lines[i][-1]
-
-        last_ab_rhythm = get_rhythm(last_ab)
-        current_ab_rhythm = get_rhythm(current_ab)
-
-        last_rhythm_index = rhythm_dict[last_ab_rhythm]
-        current_rhythm_index = rhythm_dict[current_ab_rhythm]
-
-        if last_rhythm_index == current_rhythm_index:
-            if not result[last_rhythm_index]:
-                result[last_rhythm_index].append(lyric_lines[i - 1][-2:])
-            result[last_rhythm_index].append(lyric_lines[i][-2:])
-            print 'match last'
-            print last_rhythm_index, current_rhythm_index
-            print last_ab_rhythm, current_ab_rhythm
-            print lyric_lines[i - 1][-1:], lyric_lines[i][-1:]
-
-        elif last_last_ab is not None:
-            last_last_ab_rhythm = get_rhythm(last_last_ab)
-            last_last_rhythm_index = rhythm_dict[last_last_ab_rhythm]
-            if last_last_rhythm_index == current_rhythm_index:
-                if not result[last_last_rhythm_index]:
-                    result[last_last_rhythm_index].append(lyric_lines[i - 2][-2:])
-                result[last_last_rhythm_index].append(lyric_lines[i][-2:])
-                print 'match last last'
-                print last_last_rhythm_index, current_rhythm_index
-                print last_last_ab_rhythm, current_ab_rhythm
-                print lyric_lines[i - 2][-1:], lyric_lines[i][-1:]
-    return result
-
-
-# if lrc_author is not None:
-#     print '--------' + lrc_author + '-----------'
-# lyric_lines = clear_lyric(lyric_text)
-# for l in lyric_lines:
-#     print l
-# result = analyze_rhythm_result(lyric_lines)
-# for i in range(len(result)):
-#     print i
-#     for w in result[i]:
-#         print w
-#     print '---------------------------'
 
 def delete_bad_songs():
     db = LyricCache()
@@ -414,7 +378,7 @@ def len_of_lines(lines=[]):
     return length
 
 
-def update_lines():
+def update_lines(thread_num=1):
     db = LyricCache()
     rows = db.query_all_lrc()
     total_len = len(rows)
@@ -431,7 +395,8 @@ def update_lines():
             sid = r[0]
             name = r[1]
             sname = r[2]
-            lines = clean_lyric(sid, name, sname, r[3])
+            lrc_txt = r[3]
+            lines = clean_lyric(sid, name, sname, lrc_txt)
             if lines:
                 lines_list.append(['\n'.join(lines), sid])
             process += 1
@@ -442,7 +407,6 @@ def update_lines():
         print threading.currentThread().getName(), "process completely", len(
             lines_list), '-------------------------------------------------------------------------------------------------------'
 
-    thread_num = 1
     div_len = total_len / thread_num
     for index in range(thread_num):
         start = index * div_len
@@ -451,62 +415,7 @@ def update_lines():
         t.start()
         time.sleep(0.1)
 
-
-# 发现有很多歌词的前面几行还是有包含作词作曲演唱这些信息存在，需要去除
-def remove_author_again():
-    db = LyricCache()
-    rows = db.query_all_lines()
-    total_len = len(rows)
-    print total_len, 'songs in db'
-    lines_list_to_update = []
-    for row in rows:
-        song_id = row[0]
-        song_name = row[1]
-        lrc_lines_txt = row[3]
-        lines = lrc_lines_txt.split(u'\n')
-        num_to_del = 0
-        flag = False
-        has_info = False
-        for i in range(0, len(lines)):
-            if flag:
-                flag = False
-                continue
-            line = lines[i]
-
-            if line in AUTHOR_NAMES_1 or line in AUTHOR_NAMES_2 or line in AUTHOR_NAMES_3 or line in AUTHOR_NAMES_4:
-                has_info = True
-
-                # 考虑两个作者名称连续的情况
-                try:
-                    next_line = lines[i + 1]
-                    if next_line in AUTHOR_NAMES_1 or next_line in AUTHOR_NAMES_2 or next_line in AUTHOR_NAMES_3 or next_line in AUTHOR_NAMES_4:
-                        num_to_del += 1
-                        print line
-                    else:
-                        flag = True
-                        num_to_del += 2
-                        print line
-                        print lines[i + 1]
-                except IndexError:
-                    num_to_del += 1
-                    print line
-            else:
-                # 有些歌曲将作者名称和人名连在一起，忘记了加标点隔开
-                flag = False
-                p = re.compile(u'作曲|作词|演唱|词曲|编曲|混音|编辑|封面设计')
-                if re.search(p, line):
-                    print line
-                    num_to_del += 1
-                    has_info = True
-                else:
-                    break
-        if has_info:
-            print '----------------------------'
-            print '\n'.join(lines[num_to_del:])
-            print '------------------', song_id, num_to_del, len(lines), '------------------'
-            lines_list_to_update.append(['\n'.join(lines[num_to_del:]), song_id])
-    print len(lines_list_to_update)
-    db.update_lines(lines_list_to_update)
+# update_lines(10)
 
 
 def remove_repeated_songs():
@@ -515,19 +424,44 @@ def remove_repeated_songs():
     total_len = len(rows)
     print total_len, 'songs in db'
 
-    line_dict = {}
+    first_line_dict = {}
+    last_line_dict = {}
+    songs_to_del = {}
+
+    i = 0
     for row in rows:
+        i += 1
         song_id = row[0]
         song_name = row[1]
         singer_name = row[2]
         lrc_lines = row[3]
-        pre_2_lines = lrc_lines.split(u'\n')[0] + '|' + lrc_lines.split(u'\n')[1]
-        if pre_2_lines not in line_dict.keys():
-            line_dict[pre_2_lines] = song_id
-        else:
-            print song_name, singer_name, pre_2_lines
-    print len(line_dict.keys())
+        line_list = lrc_lines.split(u'\n')
+        first_2_lines = '|'.join(line_list[:2])
+        last_2_lines = '|'.join(line_list[-2:])
 
+        if first_2_lines in first_line_dict.keys():
+            print '---------------------------------', i
+            print 'match first:', first_2_lines
+            print song_id, song_name, singer_name
+            print first_line_dict[first_2_lines][0], first_line_dict[first_2_lines][1], first_line_dict[first_2_lines][2]
+            songs_to_del[song_id] = [song_name, singer_name]
+        else:
+            first_line_dict[first_2_lines] = [song_id, song_name, singer_name]
+
+        if last_2_lines in last_line_dict.keys():
+            print '---------------------------------', i
+            print 'match last:', last_2_lines
+            print song_id, song_name, singer_name
+            print last_line_dict[last_2_lines][0], last_line_dict[last_2_lines][1], last_line_dict[last_2_lines][2]
+            songs_to_del[song_id] = [song_name, singer_name]
+        else:
+            last_line_dict[last_2_lines] = [song_id, song_name, singer_name]
+
+    print len(songs_to_del), 'songs to delete'
+    ids_to_del = []
+    for k in songs_to_del:
+        ids_to_del.append((k,))
+    db.delete_songs(ids_to_del)
 
 remove_repeated_songs()
 # remove_author_again()
