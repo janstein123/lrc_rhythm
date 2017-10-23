@@ -199,10 +199,11 @@ def get_top_songs(artist_id):
     song_dict = {}
     for tag in (list(tag_list)):
         # print tag.text
-        if not is_good_song(tag.text):
+        song_name = tag.text.strip()
+        if not is_good_song(song_name):
             continue
         sid = str(tag.attrs['href'])[9:]
-        song_dict[sid] = tag.text
+        song_dict[sid] = song_name
     return song_dict
 
 

@@ -101,6 +101,16 @@ class LyricCache:
         except MySQLdb.Error as e:
             print 'delete_songs:' + str(e)
 
+    def delete_song_by_id(self, id):
+        c = self.__conn.cursor()
+        sql = "DELETE FROM " + self.__table_name + " WHERE song_id = " + str(id)
+        try:
+            rows = c.execute(sql)
+            self.__conn.commit()
+            print rows, 'song deleted'
+        except MySQLdb.Error as e:
+            print 'delete_songs:' + str(e)
+
     def update_lines(self, lines=[]):
         if not lines:
             print 'list is empty'
@@ -111,6 +121,23 @@ class LyricCache:
         # print sql
         try:
             rows = c.executemany(sql, lines)
+            self.__conn.commit()
+            print rows, "rows updated"
+        except MySQLdb.Error as e:
+            print 'update_lines:', type(e), e
+        finally:
+            self.__lock.release()
+
+    def update_name(self, new_names=[]):
+        if not new_names:
+            print 'list is empty'
+            return
+        self.__lock.acquire()
+        c = self.__conn.cursor()
+        sql = "UPDATE " + self.__table_name + " SET song_name = %s WHERE song_id = %s"
+        # print sql
+        try:
+            rows = c.executemany(sql, new_names)
             self.__conn.commit()
             print rows, "rows updated"
         except MySQLdb.Error as e:

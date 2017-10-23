@@ -50,7 +50,7 @@ AUTHOR_NAMES_1 = (u'词', u'曲', u'编', u'鼓', u'白', u'监', u'詞', u'混'
 AUTHOR_NAMES_2 = (
     u'作词', u'作曲', u'编曲', u'词曲', u'演唱', u'合声', u'伴唱', u'混音', u'母带', u'制作', u'童音', u'微博', u'编排', u'手绘', u'填词', u'原曲',
     u'哼唱', u'发行', u'配唱', u'声编'
-    u'原唱',
+                         u'原唱',
     u'翻唱', u'副歌', u'念白', u'视频', u'独白', u'混缩', u'缩混' u'发行', u'配音', u'后期', u'作者', u'监制', u'配器', u'歌手', u'设备', u'策划',
     u'文案',
     u'出品', u'美工', u'鸣谢', u'笛箫', u'古筝', u'弦乐', u'二胡', u'琵琶', u'柳琴', u'长笛', u'笛子', u'录音', u'曲目', u'吉他', u'和声', u'钢琴',
@@ -330,6 +330,8 @@ def remove_author_again(lines=[]):
                 num_to_del += 1
             else:
                 break
+    if len(lines) - num_to_del < 4:
+        return None
     return lines[num_to_del:]
 
 
@@ -415,7 +417,58 @@ def update_lines(thread_num=1):
         t.start()
         time.sleep(0.1)
 
+
 # update_lines(10)
+
+
+def strip_song_name():
+    db = LyricCache()
+    rows = db.query_name()
+    total_len = len(rows)
+    print total_len, 'songs in db'
+    song_names_to_update = []
+    for row in rows:
+        song_id = row[0]
+        song_name = row[1]
+        new_name = song_name.strip()
+        if len(song_name) > len(new_name):
+            print song_name, new_name, len(song_name), len(new_name)
+            song_names_to_update.append((new_name, song_id))
+
+    db.update_name(song_names_to_update)
+
+
+# strip_song_name()
+def remove_voice_line():
+    db = LyricCache()
+    rows = db.query_all_lines()
+    total_len = len(rows)
+    print total_len, 'songs in db'
+    p = re.compile(u'^[啊|啦|嘿|哈|哟|呦|哎|呀|嗨|咦|吆|噢]+$', re.MULTILINE)
+    p1 = re.compile('\n\n')
+    new_line_list = []
+    for row in rows:
+        song_id = row[0]
+        song_name = row[1]
+        singer_name = row[2]
+        lrc_lines = row[3]
+        # print song_id, song_name, singer_name, '|'.join(lrc_lines.split(u'\n'))
+        new_lrc_lines, n = re.subn(p, '', lrc_lines)
+        if n > 0:
+            new_lrc_lines = re.sub(p1, '\n', new_lrc_lines).strip()
+            print song_id, song_name, singer_name
+            # print '|'.join(lrc_lines.split(u'\n'))
+            # print '|'.join(new_lrc_lines.split(u'\n'))
+            if len(new_lrc_lines.split('\n')) < 4:
+                print 'less than 4 lines'
+                db.delete_song_by_id(song_id)
+            else:
+                new_line_list.append([new_lrc_lines, song_id])
+    print len(new_line_list)
+    db.update_lines(new_line_list)
+
+
+# remove_voice_line()
 
 
 def remove_repeated_songs():
@@ -424,46 +477,78 @@ def remove_repeated_songs():
     total_len = len(rows)
     print total_len, 'songs in db'
 
-    first_line_dict = {}
-    last_line_dict = {}
+    # first_line_dict = {}
+    # last_line_dict = {}
+    first_dict = {}
+    last_dict = {}
     songs_to_del = {}
 
-    i = 0
+    i, m, n = 0, 0, 0
     for row in rows:
-        i += 1
+        i = i + 1
         song_id = row[0]
         song_name = row[1]
         singer_name = row[2]
         lrc_lines = row[3]
         line_list = lrc_lines.split(u'\n')
-        first_2_lines = '|'.join(line_list[:2])
-        last_2_lines = '|'.join(line_list[-2:])
+        line_txt = ''.join(line_list)
 
-        if first_2_lines in first_line_dict.keys():
-            print '---------------------------------', i
-            print 'match first:', first_2_lines
-            print song_id, song_name, singer_name
-            print first_line_dict[first_2_lines][0], first_line_dict[first_2_lines][1], first_line_dict[first_2_lines][2]
-            songs_to_del[song_id] = [song_name, singer_name]
+        first_line = line_txt[:8]
+        last_line = line_txt[-8:]
+        # first_2_lines = '|'.join(line_list[:2])
+        # last_2_lines = '|'.join(line_list[-2:])
+        # last_line = song_name + '|' + line_list[-4]
+        # title_and_last_5_words_dict = song_name + '|' + line_txt[-5:]
+
+        if first_line in first_dict.keys():
+            n = n + 1
+
+            print '---------------------------------', i, n
+            print 'match first:', first_line
+            print song_id, song_name, singer_name, '|'.join(line_list)
+            print first_dict[first_line][0], \
+                first_dict[first_line][1], \
+                first_dict[first_line][2], \
+                first_dict[first_line][3].replace('\n', '|')
+            # 保留字数多的歌词
+            if len(lrc_lines) > len(first_dict[first_line][3]):
+                print 'delete', first_dict[first_line][0]
+                songs_to_del[first_dict[first_line][0]] = [first_dict[first_line][1], first_dict[first_line][2]]
+                first_dict[first_line] = [song_id, song_name, singer_name, lrc_lines]
+            else:
+                print 'delete', song_id
+                songs_to_del[song_id] = [song_name, singer_name]
         else:
-            first_line_dict[first_2_lines] = [song_id, song_name, singer_name]
+            first_dict[first_line] = [song_id, song_name, singer_name, lrc_lines]
 
-        if last_2_lines in last_line_dict.keys():
-            print '---------------------------------', i
-            print 'match last:', last_2_lines
-            print song_id, song_name, singer_name
-            print last_line_dict[last_2_lines][0], last_line_dict[last_2_lines][1], last_line_dict[last_2_lines][2]
-            songs_to_del[song_id] = [song_name, singer_name]
+        if last_line in last_dict.keys():
+            m = m + 1
+            print '---------------------------------', i, m
+            print 'match last:', last_line
+            print song_id, song_name, singer_name, '|'.join(line_list)
+            print last_dict[last_line][0], \
+                last_dict[last_line][1], \
+                last_dict[last_line][2], \
+                last_dict[last_line][3].replace('\n', '|')
+            if len(lrc_lines) > len(last_dict[last_line][3]):
+                print 'delete', last_dict[last_line][0]
+                last_dict[last_line] = [song_id, song_name, singer_name, lrc_lines]
+                songs_to_del[last_dict[last_line][0]] = [last_dict[last_line][1], last_dict[last_line][2]]
+            else:
+                songs_to_del[song_id] = [song_name, singer_name]
+                print 'delete', song_id
+
         else:
-            last_line_dict[last_2_lines] = [song_id, song_name, singer_name]
-
-    print len(songs_to_del), 'songs to delete'
+            last_dict[last_line] = [song_id, song_name, singer_name, lrc_lines]
+    print len(songs_to_del), 'songs to delete', n, m
     ids_to_del = []
     for k in songs_to_del:
         ids_to_del.append((k,))
     db.delete_songs(ids_to_del)
 
+
 remove_repeated_songs()
+
 # remove_author_again()
 # new_dict = sorted(a_dict.items(), key=lambda a: a[1], reverse=True)
 # file = open('nums.txt', 'w')
