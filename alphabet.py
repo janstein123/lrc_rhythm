@@ -26,5 +26,4 @@ class alphabet(object):
                 ab_list.append(char)
         return ab_list
 
-# alphabet = alphabet()
-# print alphabet.chinese2ab("你好zhong吗")
+

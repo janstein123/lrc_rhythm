@@ -287,10 +287,46 @@ def remove_nonsense_eng_word(lines=[]):
 def remove_line_end_with_english_and_repeated_line(lines=[]):
     if not lines:
         return
+    chinese_digits = (u'〇', u'一', u'二', u'三', u'四', u'五', u'六', u'七', u'八', u'九')
     pattern = re.compile(u'.*[a-zA-Z]+$')
+    pattern_digit = re.compile("[0-9]+")
     new_lines = []
     for line in lines:
-        if not re.search(pattern, line) and line not in new_lines:
+        match_a_z = re.search(pattern, line)
+        match_0_9 = re.findall(pattern_digit, line)
+        if match_a_z:
+            continue
+        elif match_0_9:
+            del_flag = False
+            digit_dict = {}
+            for digit_str in match_0_9:
+                if len(digit_str) > 4:
+                    del_flag = True
+                    break
+                else:
+                    if digit_str in digit_dict.keys():
+                        continue
+                    if 20 > int(digit_str) > 10:
+                        digit_dict[digit_str] = u'十' + chinese_digits[int(digit_str[-1])]
+
+                    elif digit_str == u'10':
+                        digit_dict[digit_str] = u'十'
+                    elif len(digit_str) == 2 and int(digit_str) % 10 == 0:
+                        digit_dict[digit_str] = chinese_digits[int(digit_str[-2])] + u'十'
+                    elif digit_str == u'100':
+                        digit_dict[digit_str] = u'一百'
+                    else:
+                        chinese_digit = ''
+                        for d in digit_str:
+                            chinese_digit += chinese_digits[int(d)]
+                        digit_dict[digit_str] = chinese_digit
+            if del_flag:
+                continue
+            for key in digit_dict.keys():
+                line = line.replace(key, digit_dict[key])
+            if line not in new_lines:
+                new_lines.append(line)
+        elif line not in new_lines:
             new_lines.append(line)
 
     if len(new_lines) < 4:
@@ -298,6 +334,12 @@ def remove_line_end_with_english_and_repeated_line(lines=[]):
 
     return new_lines
 
+
+# lines = [u'发40啊50发到1234', u'你60好的19986', u'你好2222的好的7tt777', u'你好12的hello', u'打发时10间', u'秦时100明20月汉时广', u'万里长23征13人未还', u'秦时70明70月70汉时广', u'万里80长征人未还', u'你90好的1998']
+#
+# new_lines = remove_line_end_with_english_and_repeated_line(lines)
+# for l in new_lines:
+#     print l
 
 # 发现有很多歌词的前面几行还是有包含作词作曲演唱这些信息存在，需要去除
 def remove_author_again(lines=[]):
@@ -415,10 +457,9 @@ def update_lines(thread_num=1):
         end = (index + 1) * div_len if index < thread_num - 1 else total_len
         t = threading.Thread(target=process_clean, args=(rows[start: end],))
         t.start()
-        time.sleep(0.1)
 
 
-# update_lines(10)
+# update_lines(8)
 
 
 def strip_song_name():
@@ -444,7 +485,7 @@ def remove_voice_line():
     rows = db.query_all_lines()
     total_len = len(rows)
     print total_len, 'songs in db'
-    p = re.compile(u'^[啊|啦|嘿|哈|哟|呦|哎|呀|嗨|咦|吆|噢]+$', re.MULTILINE)
+    p = re.compile(u'^[啊|啦|嘿|哈|哟|呦|哎|呀|嗨|咦|吆|噢|呣|嗯]+$', re.MULTILINE)
     p1 = re.compile('\n\n')
     new_line_list = []
     for row in rows:
@@ -468,8 +509,7 @@ def remove_voice_line():
     db.update_lines(new_line_list)
 
 
-# remove_voice_line()
-
+remove_voice_line()
 
 def remove_repeated_songs():
     db = LyricCache()
@@ -547,8 +587,10 @@ def remove_repeated_songs():
     db.delete_songs(ids_to_del)
 
 
-remove_repeated_songs()
-
+# remove_repeated_songs()
+# line = '你好爱戴发到发1234'
+# p = re.compile("[0-9]+$")
+# print re.search(p, line).group(0)
 # remove_author_again()
 # new_dict = sorted(a_dict.items(), key=lambda a: a[1], reverse=True)
 # file = open('nums.txt', 'w')
