@@ -67,7 +67,6 @@ def get_rhythm(abs=[]):
 
 
 def analyze_rhythm_result(lyric_lines=[]):
-
     lyric_ab_lines = [1] * len(lyric_lines)
 
     ab = alphabet.alphabet()
@@ -112,48 +111,49 @@ def analyze_rhythm_result(lyric_lines=[]):
     return result
 
 
-def analyze_rhythm_twice_result(lyric_lines=[]):
+def is_eng_alpha(s):
+    if ord('a') <= ord(s) <= ord('z') or ord('A') <= ord(s) <= ord('Z'):
+        return True
+    return False
 
+
+def analyze_rhythm_twice_result(lyric_lines=[]):
+    print '|'.join(lyric_lines)
     lyric_ab_lines = [''] * len(lyric_lines)
 
     ab = alphabet.alphabet()
     for i in range(len(lyric_lines)):
         line_ab = ab.chinese2ab(lyric_lines[i])
         lyric_ab_lines[i] = line_ab
-        # print lyric_lines[i]
-        # print line_ab
     result = {}
 
     for i in range(1, len(lyric_ab_lines)):
-        last_last_abs = lyric_ab_lines[i - 2][-2:] if i > 1 and len(lyric_ab_lines[i-2]) > 1 else None
+        last_last_abs = lyric_ab_lines[i - 2][-2:] if i > 1 and len(lyric_ab_lines[i - 2]) > 1 else None
         last_abs = lyric_ab_lines[i - 1][-2:]
         current_abs = lyric_ab_lines[i][-2:]
+        if len(current_abs) < 2 or is_eng_alpha(lyric_lines[i][-2]):
+            continue
 
-        if len(current_abs) > 1 and len(last_abs) > 1 and current_abs != last_abs:
+        current_ab_rhythm = get_rhythm(current_abs)
+        current_rhythm_index_1 = rhythm_dict[current_ab_rhythm[-1]]
+        current_rhythm_index_2 = rhythm_dict[current_ab_rhythm[-2]]
+
+        key = (current_rhythm_index_2, current_rhythm_index_1)
+        if len(last_abs) > 1 and not is_eng_alpha(lyric_lines[i-1][-2]) and current_abs != last_abs:
             last_ab_rhythm = get_rhythm(last_abs)
-            current_ab_rhythm = get_rhythm(current_abs)
 
             last_rhythm_index_1 = rhythm_dict[last_ab_rhythm[-1]]
             last_rhythm_index_2 = rhythm_dict[last_ab_rhythm[-2]]
 
-            current_rhythm_index_1 = rhythm_dict[current_ab_rhythm[-1]]
-            current_rhythm_index_2 = rhythm_dict[current_ab_rhythm[-2]]
-
-            key = (current_rhythm_index_2, current_rhythm_index_1)
             if last_rhythm_index_1 == current_rhythm_index_1 and last_rhythm_index_2 == current_rhythm_index_2:
                 if key not in result.keys():
                     result[key] = [lyric_lines[i - 1][-2:], ]
                 result[key].append(lyric_lines[i][-2:])
                 # print 'match last'
-                # print last_rhythm_index_1, current_rhythm_index_1
-                # print last_ab_rhythm, current_ab_rhythm
-                # print lyric_lines[i - 1][-1:], lyric_lines[i][-1:]
-        elif len(current_abs) > 1 and last_last_abs is not None and len(last_last_abs) > 1 and last_last_abs != current_abs:
-            current_ab_rhythm = get_rhythm(current_abs)
-            current_rhythm_index_1 = rhythm_dict[current_ab_rhythm[-1]]
-            current_rhythm_index_2 = rhythm_dict[current_ab_rhythm[-2]]
-
+                # print lyric_lines[i - 1][-2:], lyric_lines[i][-2:]
+        elif last_last_abs is not None and len(last_last_abs) > 1 and not is_eng_alpha(lyric_lines[i-2][-2]) and last_last_abs != current_abs:
             last_last_ab_rhythm = get_rhythm(last_last_abs)
+
             last_last_rhythm_index_1 = rhythm_dict[last_last_ab_rhythm[-1]]
             last_last_rhythm_index_2 = rhythm_dict[last_last_ab_rhythm[-2]]
 
@@ -162,9 +162,7 @@ def analyze_rhythm_twice_result(lyric_lines=[]):
                     result[key] = [lyric_lines[i - 1][-2:], ]
                 result[key].append(lyric_lines[i][-2:])
                 # print 'match last last'
-                # print last_last_rhythm_index, current_rhythm_index_1
-                # print last_last_ab_rhythm, current_ab_rhythm
-                # print lyric_lines[i - 2][-1:], lyric_lines[i][-1:]
+                # print lyric_lines[i - 2][-2:], lyric_lines[i][-2:]
     return result
 
 print unichr(0x7256), unichr(0x5463)
@@ -181,16 +179,16 @@ for row in rows:
     line_txt = row[3]
     print '--------------------', song_id, song_name, singer_name, '--------------------', n
     lines = line_txt.split('\n')
-    print '|'.join(lines)
     results = analyze_rhythm_twice_result(lines)
+    print len(results)
     for key in results.keys():
         print key, '|'.join(results[key])
-        if key not in  all_results.keys():
+        if key not in all_results.keys():
             all_results[key] = results[key]
         else:
             all_results[key].extend(results[key])
 
-sorted_lst = sorted(all_results.items(), key=lambda a:len(a[1]), reverse=True)
+sorted_lst = sorted(all_results.items(), key=lambda a: len(a[1]), reverse=True)
 
 for l in sorted_lst:
     print l[0], '|'.join(l[1])
@@ -222,4 +220,3 @@ for l in sorted_lst:
 #             break
 #     print
 #     print
-
