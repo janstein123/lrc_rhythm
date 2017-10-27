@@ -70,7 +70,7 @@ class LyricCache:
         c = self.__conn.cursor()
         try:
             sql = 'SELECT song_id, song_name, singer_name, lyric from ' + self.__table_name
-            # sql = 'SELECT song_id, song_name, singer_name, lyric FROM ' + self.__table_name + ' WHERE song_id in (506986353)'
+            # sql = 'SELECT song_id, song_name, singer_name, lyric FROM ' + self.__table_name + ' WHERE song_id in (357336)'
             c.execute(sql)
             self.__conn.commit()
             return c.fetchall()
@@ -81,7 +81,7 @@ class LyricCache:
     def query_all_lines(self):
         c = self.__conn.cursor()
         try:
-            c.execute('SELECT song_id, song_name, singer_name, lrc_lines from ' + self.__table_name + ' limit 1000')
+            c.execute('SELECT song_id, song_name, singer_name, lrc_lines from ' + self.__table_name)
             # sql = 'SELECT song_id, song_name, singer_name, lrc_lines FROM ' + self.__table_name + ' WHERE song_id = 248097'
             # print sql
             # c.execute(sql)

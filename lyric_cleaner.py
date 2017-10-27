@@ -298,32 +298,27 @@ def remove_line_end_with_english_and_repeated_line(lines=[]):
             continue
         elif match_0_9:
             del_flag = False
-            digit_dict = {}
             for digit_str in match_0_9:
                 if len(digit_str) > 4:
                     del_flag = True
                     break
                 else:
-                    if digit_str in digit_dict.keys():
-                        continue
                     if 20 > int(digit_str) > 10:
-                        digit_dict[digit_str] = u'十' + chinese_digits[int(digit_str[-1])]
+                        chinese_digit = u'十' + chinese_digits[int(digit_str[-1])]
 
                     elif digit_str == u'10':
-                        digit_dict[digit_str] = u'十'
+                        chinese_digit = u'十'
                     elif len(digit_str) == 2 and int(digit_str) % 10 == 0:
-                        digit_dict[digit_str] = chinese_digits[int(digit_str[-2])] + u'十'
+                        chinese_digit = chinese_digits[int(digit_str[-2])] + u'十'
                     elif digit_str == u'100':
-                        digit_dict[digit_str] = u'一百'
+                        chinese_digit = u'一百'
                     else:
                         chinese_digit = ''
                         for d in digit_str:
                             chinese_digit += chinese_digits[int(d)]
-                        digit_dict[digit_str] = chinese_digit
+                    line = line.replace(digit_str, chinese_digit, 1)
             if del_flag:
                 continue
-            for key in digit_dict.keys():
-                line = line.replace(key, digit_dict[key])
             if line not in new_lines:
                 new_lines.append(line)
         elif line not in new_lines:
@@ -485,8 +480,8 @@ def remove_voice_line():
     rows = db.query_all_lines()
     total_len = len(rows)
     print total_len, 'songs in db'
-    p = re.compile(u'^[啊|啦|嘿|哈|哟|呦|哎|呀|嗨|咦|吆|噢|呣|嗯]+$', re.MULTILINE)
-    p1 = re.compile('\n\n')
+    p = re.compile(u'^[啊|啦|嘿|哈|哟|呦|哎|呀|嗨|咦|吆|噢|呣|嗯|咿|喂|哦|喔]+$', re.MULTILINE)
+    p1 = re.compile('\n{2,}')
     new_line_list = []
     for row in rows:
         song_id = row[0]
@@ -495,6 +490,7 @@ def remove_voice_line():
         lrc_lines = row[3]
         # print song_id, song_name, singer_name, '|'.join(lrc_lines.split(u'\n'))
         new_lrc_lines, n = re.subn(p, '', lrc_lines)
+
         if n > 0:
             new_lrc_lines = re.sub(p1, '\n', new_lrc_lines).strip()
             print song_id, song_name, singer_name
@@ -509,7 +505,8 @@ def remove_voice_line():
     db.update_lines(new_line_list)
 
 
-remove_voice_line()
+# remove_voice_line()
+
 
 def remove_repeated_songs():
     db = LyricCache()

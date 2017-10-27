@@ -4,7 +4,8 @@
 import threading
 import re
 import time
-import alphabet
+from alphabet import AlphaBet
+import jieba
 from lyric_cache import LyricCache
 
 # rhythm_table = [['a', 'ia', 'ua'],
@@ -66,12 +67,13 @@ def get_rhythm(abs=[]):
     return rhythms
 
 
-def analyze_rhythm_result(lyric_lines=[]):
+def get_result_of_rhyme_once(lyric_lines=[]):
     lyric_ab_lines = [1] * len(lyric_lines)
-
-    ab = alphabet.alphabet()
+    short_lines = []
+    ab = AlphaBet.get_instance()
     for i in range(len(lyric_lines)):
-        line_ab = ab.chinese2ab(lyric_lines[i])
+        short_lines.append(list(jieba.cut(lyric_lines[i]))[-1])
+        line_ab = ab.chinese2ab(short_lines[i])
         lyric_ab_lines[i] = line_ab
         # print lyric_lines[i]
         # print line_ab
@@ -81,17 +83,18 @@ def analyze_rhythm_result(lyric_lines=[]):
         last_last_ab = lyric_ab_lines[i - 2][-1:] if i > 1 else None
         last_ab = lyric_ab_lines[i - 1][-1:]
         current_ab = lyric_ab_lines[i][-1:]
+        # print last_last_ab, last_ab, current_ab, lyric_lines[i]
 
         last_ab_rhythm = get_rhythm(last_ab)
         current_ab_rhythm = get_rhythm(current_ab)
-
+        # print last_ab_rhythm, current_ab_rhythm
         last_rhythm_index = rhythm_dict[last_ab_rhythm[-1]]
         current_rhythm_index = rhythm_dict[current_ab_rhythm[-1]]
 
         if last_rhythm_index == current_rhythm_index:
             if not result[last_rhythm_index]:
-                result[last_rhythm_index].append(lyric_lines[i - 1][-2:])
-            result[last_rhythm_index].append(lyric_lines[i][-2:])
+                result[last_rhythm_index].append(short_lines[i - 1])
+            result[last_rhythm_index].append(short_lines[i])
             # print 'match last'
             # print last_rhythm_index, current_rhythm_index
             # print last_ab_rhythm, current_ab_rhythm
@@ -102,8 +105,8 @@ def analyze_rhythm_result(lyric_lines=[]):
             last_last_rhythm_index = rhythm_dict[last_last_ab_rhythm[-1]]
             if last_last_rhythm_index == current_rhythm_index:
                 if not result[last_last_rhythm_index]:
-                    result[last_last_rhythm_index].append(lyric_lines[i - 2][-2:])
-                result[last_last_rhythm_index].append(lyric_lines[i][-2:])
+                    result[last_last_rhythm_index].append(short_lines[i - 2])
+                result[last_last_rhythm_index].append(short_lines[i])
                 # print 'match last last'
                 # print last_last_rhythm_index, current_rhythm_index
                 # print last_last_ab_rhythm, current_ab_rhythm
@@ -117,11 +120,11 @@ def is_eng_alpha(s):
     return False
 
 
-def analyze_rhythm_twice_result(lyric_lines=[]):
+def get_result_of_rhyme_twice(lyric_lines=[]):
     print '|'.join(lyric_lines)
     lyric_ab_lines = [''] * len(lyric_lines)
 
-    ab = alphabet.alphabet()
+    ab = AlphaBet.get_instance()
     for i in range(len(lyric_lines)):
         line_ab = ab.chinese2ab(lyric_lines[i])
         lyric_ab_lines[i] = line_ab
@@ -139,7 +142,7 @@ def analyze_rhythm_twice_result(lyric_lines=[]):
         current_rhythm_index_2 = rhythm_dict[current_ab_rhythm[-2]]
 
         key = (current_rhythm_index_2, current_rhythm_index_1)
-        if len(last_abs) > 1 and not is_eng_alpha(lyric_lines[i-1][-2]) and current_abs != last_abs:
+        if len(last_abs) > 1 and not is_eng_alpha(lyric_lines[i - 1][-2]) and current_abs != last_abs:
             last_ab_rhythm = get_rhythm(last_abs)
 
             last_rhythm_index_1 = rhythm_dict[last_ab_rhythm[-1]]
@@ -151,7 +154,8 @@ def analyze_rhythm_twice_result(lyric_lines=[]):
                 result[key].append(lyric_lines[i][-2:])
                 # print 'match last'
                 # print lyric_lines[i - 1][-2:], lyric_lines[i][-2:]
-        elif last_last_abs is not None and len(last_last_abs) > 1 and not is_eng_alpha(lyric_lines[i-2][-2]) and last_last_abs != current_abs:
+        elif last_last_abs is not None and len(last_last_abs) > 1 and not is_eng_alpha(
+                lyric_lines[i - 2][-2]) and last_last_abs != current_abs:
             last_last_ab_rhythm = get_rhythm(last_last_abs)
 
             last_last_rhythm_index_1 = rhythm_dict[last_last_ab_rhythm[-1]]
@@ -165,58 +169,155 @@ def analyze_rhythm_twice_result(lyric_lines=[]):
                 # print lyric_lines[i - 2][-2:], lyric_lines[i][-2:]
     return result
 
-print unichr(0x7256), unichr(0x5463)
-db = LyricCache()
-rows = db.query_all_lines()
-all_results = {}
 
-n = 0
-for row in rows:
-    n += 1
-    song_id = row[0]
-    song_name = row[1]
-    singer_name = row[2]
-    line_txt = row[3]
-    print '--------------------', song_id, song_name, singer_name, '--------------------', n
-    lines = line_txt.split('\n')
-    results = analyze_rhythm_twice_result(lines)
-    print len(results)
-    for key in results.keys():
-        print key, '|'.join(results[key])
-        if key not in all_results.keys():
-            all_results[key] = results[key]
+def get_result_of_rhyme_3times(lyric_lines=[]):
+    print '|'.join(lyric_lines)
+    lyric_ab_lines = [''] * len(lyric_lines)
+
+    ab = AlphaBet.get_instance()
+    for i in range(len(lyric_lines)):
+        line_ab = ab.chinese2ab(lyric_lines[i])
+        lyric_ab_lines[i] = line_ab
+    result = {}
+
+    for i in range(1, len(lyric_ab_lines)):
+        last_last_abs = lyric_ab_lines[i - 3][-2:] if i > 1 and len(lyric_ab_lines[i - 3]) > 2 else None
+        last_abs = lyric_ab_lines[i - 1][-3:]
+        current_abs = lyric_ab_lines[i][-3:]
+        if len(current_abs) < 3 or is_eng_alpha(lyric_lines[i][-2]) or is_eng_alpha(lyric_lines[i][-3]):
+            continue
+
+        current_ab_rhythm = get_rhythm(current_abs)
+        current_rhythm_index_1 = rhythm_dict[current_ab_rhythm[-1]]
+        current_rhythm_index_2 = rhythm_dict[current_ab_rhythm[-2]]
+        current_rhythm_index_3 = rhythm_dict[current_ab_rhythm[-3]]
+
+        key = (current_rhythm_index_3, current_rhythm_index_2, current_rhythm_index_1)
+        if len(last_abs) > 2 and not is_eng_alpha(lyric_lines[i - 1][-2]) \
+                and not is_eng_alpha(lyric_lines[i - 1][-3]) \
+                and lyric_lines[i][-3] != lyric_lines[i - 1][-3]:
+
+            last_ab_rhythm = get_rhythm(last_abs)
+            last_rhythm_index_1 = rhythm_dict[last_ab_rhythm[-1]]
+            last_rhythm_index_2 = rhythm_dict[last_ab_rhythm[-2]]
+            last_rhythm_index_3 = rhythm_dict[last_ab_rhythm[-3]]
+
+            if last_rhythm_index_1 == current_rhythm_index_1 \
+                    and last_rhythm_index_2 == current_rhythm_index_2 \
+                    and last_rhythm_index_3 == current_rhythm_index_3:
+                if key not in result.keys():
+                    result[key] = [lyric_lines[i - 1][-3:], ]
+                result[key].append(lyric_lines[i][-3:])
+                # print 'match last'
+                # print lyric_lines[i - 1][-2:], lyric_lines[i][-2:]
+        elif last_last_abs is not None and len(last_last_abs) > 2 \
+                and not is_eng_alpha(lyric_lines[i - 2][-2]) \
+                and not is_eng_alpha(lyric_lines[i - 2][-3]) \
+                and lyric_lines[i][-3] != lyric_lines[i - 2][-3]:
+
+            last_last_ab_rhythm = get_rhythm(last_last_abs)
+            last_last_rhythm_index_1 = rhythm_dict[last_last_ab_rhythm[-1]]
+            last_last_rhythm_index_2 = rhythm_dict[last_last_ab_rhythm[-2]]
+            last_last_rhythm_index_3 = rhythm_dict[last_last_ab_rhythm[-3]]
+
+            if last_last_rhythm_index_1 == current_rhythm_index_1 \
+                    and last_last_rhythm_index_2 == current_rhythm_index_2 \
+                    and last_last_rhythm_index_3 == current_rhythm_index_3:
+                if key not in result.keys():
+                    result[key] = [lyric_lines[i - 1][-3:], ]
+                result[key].append(lyric_lines[i][-3:])
+                # print 'match last last'
+                # print lyric_lines[i - 2][-2:], lyric_lines[i][-2:]
+    return result
+
+
+def get_all_of_rhyme_by_count(count):
+    db = LyricCache()
+    rows = db.query_all_lines()
+    all_results = {}
+    n = 0
+    for row in rows:
+        n += 1
+        song_id = row[0]
+        song_name = row[1]
+        singer_name = row[2]
+        line_txt = row[3]
+        print '--------------------', song_id, song_name, singer_name, '--------------------', n
+        lines = line_txt.split('\n')
+        if count == 2:
+            results = get_result_of_rhyme_twice(lines)
+        elif count == 3:
+            results = get_result_of_rhyme_3times(lines)
         else:
-            all_results[key].extend(results[key])
+            results = {}
+        print len(results)
+        for key in results.keys():
+            print key, '|'.join(results[key])
+            if key not in all_results.keys():
+                all_results[key] = results[key]
+            else:
+                all_results[key].extend(results[key])
 
-sorted_lst = sorted(all_results.items(), key=lambda a: len(a[1]), reverse=True)
+    sorted_lst = sorted(all_results.items(), key=lambda a: len(a[1]), reverse=True)
+    print '---------------------ordered list----------------------------'
+    for l in sorted_lst:
+        print l[0], len(l[1])
+        counts = {}
+        for word in l[1]:
+            if word in counts.keys():
+                counts[word] += 1
+            else:
+                counts[word] = 1
+        sorted_counts = sorted(counts.items(), key=lambda a: a[1], reverse=True)
+        for count in sorted_counts:
+            print count[0], count[1]
 
-for l in sorted_lst:
-    print l[0], '|'.join(l[1])
+get_all_of_rhyme_by_count(3)
 
 
-# all_results = [[] for rs in range(RHYTHM_NUM)]
-#
-# print len(all_rhyme_dict)
-#
-# for key in all_rhyme_dict.keys():
-#     for i in range(len(all_rhyme_dict[key])):
-#         all_results[i].extend(all_rhyme_dict[key][i])
-#
-# for result in all_results:
-#     print len(result), '|'.join(result)
-#     count_dict = {}
-#     for word in result:
-#         if word not in count_dict.keys():
-#             count_dict[word] = 1
-#         else:
-#             count_dict[word] += 1
-#     count_dict = sorted(count_dict.items(), key=lambda a:a[1], reverse=True)
-#     i = 0
-#     for count in count_dict:
-#         i += 1
-#         if i < len(count_dict):
-#             print count[0], count[1],
-#         if i == 100:
-#             break
-#     print
-#     print
+def get_all_of_rhyme_once():
+    db = LyricCache()
+    rows = db.query_all_lines()
+    song_rhyme_dict = {}
+    n = 0
+    for row in rows:
+        n += 1
+        song_id = row[0]
+        song_name = row[1]
+        singer_name = row[2]
+        line_txt = row[3]
+        print '--------------------', song_id, song_name, singer_name, '--------------------', n
+        lines = line_txt.split('\n')
+        results = get_result_of_rhyme_once(lines)
+        for r in results:
+            if r:
+                print '|'.join(r)
+        song_rhyme_dict[song_id] = results
+
+    all_results = [[] for rs in range(RHYTHM_NUM)]
+    print len(song_rhyme_dict)
+
+    for key in song_rhyme_dict.keys():
+        for i in range(len(song_rhyme_dict[key])):
+            all_results[i].extend(song_rhyme_dict[key][i])
+
+    for result in all_results:
+        print len(result), '|'.join(result)
+        count_dict = {}
+        for word in result:
+            if word not in count_dict.keys():
+                count_dict[word] = 1
+            else:
+                count_dict[word] += 1
+        count_dict = sorted(count_dict.items(), key=lambda a: a[1], reverse=True)
+        i = 0
+        for count in count_dict:
+            i += 1
+            if i < len(count_dict):
+                print count[0], count[1],
+            if i == 100:
+                break
+        print
+        print
+
+# get_all_of_rhyme_once()
