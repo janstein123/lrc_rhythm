@@ -272,7 +272,7 @@ def get_all_of_rhyme_by_count(count):
         for count in sorted_counts:
             print count[0], count[1]
 
-get_all_of_rhyme_by_count(3)
+# get_all_of_rhyme_by_count(3)
 
 
 def get_all_of_rhyme_once():
@@ -310,14 +310,8 @@ def get_all_of_rhyme_once():
             else:
                 count_dict[word] += 1
         count_dict = sorted(count_dict.items(), key=lambda a: a[1], reverse=True)
-        i = 0
         for count in count_dict:
-            i += 1
             if i < len(count_dict):
-                print count[0], count[1],
-            if i == 100:
-                break
-        print
-        print
+                print count[0], count[1]
 
-# get_all_of_rhyme_once()
+get_all_of_rhyme_once()

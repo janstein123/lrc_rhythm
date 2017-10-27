@@ -49,8 +49,7 @@ AUTHOR_NAMES_1 = (u'词', u'曲', u'编', u'鼓', u'白', u'监', u'詞', u'混'
 
 AUTHOR_NAMES_2 = (
     u'作词', u'作曲', u'编曲', u'词曲', u'演唱', u'合声', u'伴唱', u'混音', u'母带', u'制作', u'童音', u'微博', u'编排', u'手绘', u'填词', u'原曲',
-    u'哼唱', u'发行', u'配唱', u'声编'
-                         u'原唱',
+    u'哼唱', u'发行', u'配唱', u'声编', u'原唱',
     u'翻唱', u'副歌', u'念白', u'视频', u'独白', u'混缩', u'缩混' u'发行', u'配音', u'后期', u'作者', u'监制', u'配器', u'歌手', u'设备', u'策划',
     u'文案',
     u'出品', u'美工', u'鸣谢', u'笛箫', u'古筝', u'弦乐', u'二胡', u'琵琶', u'柳琴', u'长笛', u'笛子', u'录音', u'曲目', u'吉他', u'和声', u'钢琴',
@@ -81,7 +80,7 @@ def has_special_char(str):
     return re.search(pattern, str) is not None
 
 
-def remove_non_lrc_line(sid, name, sname, lrc):
+def remove_non_lrc_line(sid, song_name, singer_name, lrc):
     global m, n
 
     pattern = re.compile(u'\n')
@@ -132,17 +131,18 @@ def remove_non_lrc_line(sid, name, sname, lrc):
         elif re.search(re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z\s　\u00a0\u2028\ue3ac,，。.?？（()）！!]'), line):
             head_to_del.append(i)
         else:
-            name = name.strip()
 
             def is_song_title_line():
                 # 如果行和歌名完全相同，认为是歌名行
                 # 如果行中包含歌名，并且同时包含非中文非空格非逗号的字符，也认为是歌名行
                 # 行中包含歌名，但是行内只有中文空格逗号字符，说明可能是歌词正文
                 # 如果行中包含歌名，同时也包含歌手名，那一定是歌名行
-                if name == line:
+                if song_name == line:
                     return True
-                elif name in line:
-                    if sname in line:
+                elif singer_name == line:
+                    return True
+                elif song_name in line:
+                    if singer_name in line:
                         return True
                     else:
                         p = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCB\s　\u00a0\u2028\ue3ac,，。]')
@@ -372,6 +372,20 @@ def remove_author_again(lines=[]):
     return lines[num_to_del:]
 
 
+def remove_voice_line(song_id, song_name, lrc_txt):
+    p = re.compile(u'^[啊|啦|嘿|哈|哟|呦|哎|呀|嗨|咦|吆|噢|呣|嗯|咿|喂|哦|喔|哪|伊]+$', re.MULTILINE)
+    p1 = re.compile('\n{2,}')
+    new_lrc_lines, n = re.subn(p, '', lrc_txt)
+    if n > 0:
+        new_lrc_lines = re.sub(p1, '\n', new_lrc_lines).strip()
+        print song_id, song_name
+        if len(new_lrc_lines.split('\n')) < 4:
+            print song_id, 'less than 4 lines'
+            return None
+
+    return new_lrc_lines
+
+
 def clean_lyric(sid, name, sname, raw_lrc):
     # print raw_lrc
     if raw_lrc:
@@ -384,7 +398,8 @@ def clean_lyric(sid, name, sname, raw_lrc):
             lines = remove_nonsense_eng_word(lines)
             lines = remove_line_end_with_english_and_repeated_line(lines)
             lines = remove_author_again(lines)
-            return lines
+            if lines:
+                return remove_voice_line(sid, name, '\n'.join(lines))
     return None
 
 
@@ -397,17 +412,18 @@ def delete_bad_songs():
         song_id = row[0]
         song_name = row[1]
         singer_name = row[3]
-        # pattern = re.compile(u'cover|伴奏|remix|instrumental|kala|[(（【[].+版[]】）)]|demo|live|version|dj', re.I)
-        p1 = re.compile(u'[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z0-9\u00a0\u2028\ue3ac 　\'.,，。！!？?:]')
-        p2 = re.compile(u'\([国]\)')
-        p3 = re.compile(u'cover|伴奏|remix|mix|instrumental|kala|demo|live|version|d\.?j|伴唱|纯音乐', re.I)
+        p1 = re.compile(u"[^\u3400-\u4db5\u4E00-\u9FCBa-zA-Z0-9\u00a0\u2028\ue3ac 　'.…,，。！!？?:]")
+        p2 = re.compile(u'\([国|粤]\)')
+        p3 = re.compile(u'cover|伴奏|mix|instrumental|demo|([^a-zA-Z]live)|version|d\.?j|伴唱|纯音乐|(版$)', re.I)
         if (re.search(p1, song_name) and not re.search(p2, song_name)) or re.search(p3, song_name):
             to_del_ids.append((song_id,))
             print song_id, song_name
     print len(to_del_ids)
-    # print str(tuple(to_del_ids))
     if len(to_del_ids) > 0:
         db.delete_songs(to_del_ids)
+
+
+# delete_bad_songs()
 
 
 def len_of_lines(lines=[]):
@@ -432,12 +448,12 @@ def update_lines(thread_num=1):
         lines_list = []
         for r in rows_div:
             sid = r[0]
-            name = r[1]
-            sname = r[2]
-            lrc_txt = r[3]
-            lines = clean_lyric(sid, name, sname, lrc_txt)
-            if lines:
-                lines_list.append(['\n'.join(lines), sid])
+            name = r[1].strip()
+            sname = r[2].strip()
+            lrc_txt = r[3].strip()
+            new_lrc_txt = clean_lyric(sid, name, sname, lrc_txt)
+            if new_lrc_txt:
+                lines_list.append([new_lrc_txt, sid])
             process += 1
             print threading.currentThread().getName(), sid, name, sname, 'updated', str(process) + '/' + str(
                 part_len), ('%.2f%%' % (process / float(part_len) * 100))
@@ -454,7 +470,7 @@ def update_lines(thread_num=1):
         t.start()
 
 
-# update_lines(8)
+update_lines(8)
 
 
 def strip_song_name():
@@ -475,37 +491,6 @@ def strip_song_name():
 
 
 # strip_song_name()
-def remove_voice_line():
-    db = LyricCache()
-    rows = db.query_all_lines()
-    total_len = len(rows)
-    print total_len, 'songs in db'
-    p = re.compile(u'^[啊|啦|嘿|哈|哟|呦|哎|呀|嗨|咦|吆|噢|呣|嗯|咿|喂|哦|喔]+$', re.MULTILINE)
-    p1 = re.compile('\n{2,}')
-    new_line_list = []
-    for row in rows:
-        song_id = row[0]
-        song_name = row[1]
-        singer_name = row[2]
-        lrc_lines = row[3]
-        # print song_id, song_name, singer_name, '|'.join(lrc_lines.split(u'\n'))
-        new_lrc_lines, n = re.subn(p, '', lrc_lines)
-
-        if n > 0:
-            new_lrc_lines = re.sub(p1, '\n', new_lrc_lines).strip()
-            print song_id, song_name, singer_name
-            # print '|'.join(lrc_lines.split(u'\n'))
-            # print '|'.join(new_lrc_lines.split(u'\n'))
-            if len(new_lrc_lines.split('\n')) < 4:
-                print 'less than 4 lines'
-                db.delete_song_by_id(song_id)
-            else:
-                new_line_list.append([new_lrc_lines, song_id])
-    print len(new_line_list)
-    db.update_lines(new_line_list)
-
-
-# remove_voice_line()
 
 
 def remove_repeated_songs():
@@ -539,7 +524,6 @@ def remove_repeated_songs():
 
         if first_line in first_dict.keys():
             n = n + 1
-
             print '---------------------------------', i, n
             print 'match first:', first_line
             print song_id, song_name, singer_name, '|'.join(line_list)
@@ -582,7 +566,6 @@ def remove_repeated_songs():
     for k in songs_to_del:
         ids_to_del.append((k,))
     db.delete_songs(ids_to_del)
-
 
 # remove_repeated_songs()
 # line = '你好爱戴发到发1234'

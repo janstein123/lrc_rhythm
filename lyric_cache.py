@@ -6,7 +6,7 @@ import threading
 
 
 class LyricCache:
-    __table_name = 'new_lyrics'
+    __table_name = 'all_lyrics'
     __lock = threading.Lock()
 
     def __init__(self):

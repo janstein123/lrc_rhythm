@@ -7,11 +7,9 @@
   <component name="ChangeListManager">
     <list default="true" id="b1271fe1-e776-4e08-9aa8-6870533f451b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/alphabet.py" afterPath="$PROJECT_DIR$/alphabet.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lyric_cache.py" afterPath="$PROJECT_DIR$/lyric_cache.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lyric_cleaner.py" afterPath="$PROJECT_DIR$/lyric_cleaner.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lyric_rhythm_analyzer.py" afterPath="$PROJECT_DIR$/lyric_rhythm_analyzer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/word.data" afterPath="$PROJECT_DIR$/word.data" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,11 +20,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="lyric_cleaner.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="lyric_cleaner.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lyric_cleaner.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2919">
-              <caret line="450" column="31" lean-forward="false" selection-start-line="450" selection-start-column="31" selection-end-line="450" selection-end-column="31" />
+            <state relative-caret-position="299">
+              <caret line="540" column="39" lean-forward="false" selection-start-line="540" selection-start-column="39" selection-end-line="540" selection-end-column="39" />
               <folding>
                 <element signature="e#42#58#0" expanded="true" />
               </folding>
@@ -44,14 +42,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="lyric_rhythm_analyzer.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="lyric_rhythm_analyzer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lyric_rhythm_analyzer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="126" column="32" lean-forward="true" selection-start-line="126" selection-start-column="32" selection-end-line="126" selection-end-column="32" />
+            <state relative-caret-position="246">
+              <caret line="262" column="24" lean-forward="true" selection-start-line="262" selection-start-column="24" selection-end-line="262" selection-end-column="24" />
               <folding>
                 <element signature="e#43#59#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/Program Files/Python/Lib/site-packages/jieba/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="230">
+              <caret line="502" column="0" lean-forward="false" selection-start-line="502" selection-start-column="0" selection-end-line="502" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -110,7 +118,7 @@
         <entry file="file://$PROJECT_DIR$/lyric_cache.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="222">
-              <caret line="58" column="8" lean-forward="false" selection-start-line="58" selection-start-column="8" selection-end-line="58" selection-end-column="8" />
+              <caret line="80" column="8" lean-forward="false" selection-start-line="80" selection-start-column="8" selection-end-line="80" selection-end-column="8" />
               <folding>
                 <element signature="e#43#57#0" expanded="true" />
               </folding>
@@ -129,24 +137,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>5690</find>
-      <find>嚒</find>
-      <find>5af</find>
-      <find>嫲</find>
-      <find>閪</find>
-      <find>sort</find>
-      <find>get_rhythm</find>
-      <find>0</find>
-      <find>remove_line_end_with_english_and_repeated_line</find>
-      <find>咳哟</find>
-      <find>鸡鸡</find>
-      <find>analyze_rhythm_result</find>
-      <find>8e0e</find>
-      <find>8e02</find>
-      <find>8278</find>
-      <find>5462</find>
-      <find>88Aa</find>
-      <find>72Aa</find>
       <find>95a0</find>
       <find>4FEe</find>
       <find>6E6e</find>
@@ -159,6 +149,24 @@
       <find>alphabet</find>
       <find>AlphaBet</find>
       <find>4E48</find>
+      <find>name</find>
+      <find>remove_non_lrc_line</find>
+      <find>singer_name</find>
+      <find>remove_line_end_with_english_and_repeated_line</find>
+      <find>29850686</find>
+      <find>alive</find>
+      <find>live</find>
+      <find>Live</find>
+      <find>kala</find>
+      <find>instrumental</find>
+      <find>remix</find>
+      <find>dj</find>
+      <find>clean_lyric</find>
+      <find>remove_voice_line</find>
+      <find>update_lines</find>
+      <find>remove_repeated_songs</find>
+      <find>remove_author_again</find>
+      <find>less than</find>
     </findStrings>
     <replaceStrings>
       <replace>1</replace>
@@ -188,11 +196,11 @@
         <option value="$PROJECT_DIR$/singer_crawler.py" />
         <option value="$PROJECT_DIR$/one_singer_crawler.py" />
         <option value="$PROJECT_DIR$/lyric_crawler.py" />
-        <option value="$PROJECT_DIR$/lyric_cache.py" />
-        <option value="$PROJECT_DIR$/lyric_cleaner.py" />
         <option value="$PROJECT_DIR$/alphabet.py" />
         <option value="$PROJECT_DIR$/word.data" />
         <option value="$PROJECT_DIR$/lyric_rhythm_analyzer.py" />
+        <option value="$PROJECT_DIR$/lyric_cache.py" />
+        <option value="$PROJECT_DIR$/lyric_cleaner.py" />
       </list>
     </option>
   </component>
@@ -271,7 +279,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.lyric_rhythm_analyzer">
+  <component name="RunManager" selected="Python.lyric_cleaner">
     <configuration name="alphabet" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -366,8 +374,8 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.lyric_rhythm_analyzer" />
-        <item index="1" class="java.lang.String" itemvalue="Python.lyric_cleaner" />
+        <item index="0" class="java.lang.String" itemvalue="Python.lyric_cleaner" />
+        <item index="1" class="java.lang.String" itemvalue="Python.lyric_rhythm_analyzer" />
         <item index="2" class="java.lang.String" itemvalue="Python.alphabet" />
         <item index="3" class="java.lang.String" itemvalue="Python.one_singer_crawler" />
         <item index="4" class="java.lang.String" itemvalue="Python.lyric_crawler" />
@@ -598,7 +606,14 @@
       <option name="project" value="LOCAL" />
       <updated>1508939820192</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="1.get words of triple rhyme&#10;2.fix bug of cleaner">
+      <created>1509080914401</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1509080914401</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TodoView">
@@ -620,8 +635,8 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3980447" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282123" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5586592" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20565553" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4455307" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20565553" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3198324" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -644,12 +659,12 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282123" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.51536316" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.47905028" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960895" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18251929" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3980447" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20565553" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20565553" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3198324" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -686,7 +701,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="improve clear flow and get rhythm match result" />
     <MESSAGE value="extract method &#10;and method of getting top songs" />
     <MESSAGE value="create database" />
     <MESSAGE value="thread test" />
@@ -711,7 +725,8 @@
     <MESSAGE value="improve lrc line (add some author names)" />
     <MESSAGE value="improve cleaner and remove repeated songs" />
     <MESSAGE value="analyze the rhyme" />
-    <option name="LAST_COMMIT_MESSAGE" value="analyze the rhyme" />
+    <MESSAGE value="1.get words of triple rhyme&#10;2.fix bug of cleaner" />
+    <option name="LAST_COMMIT_MESSAGE" value="1.get words of triple rhyme&#10;2.fix bug of cleaner" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -720,13 +735,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/Program Files/Python/Lib/site-packages/bs4/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1575">
-          <caret line="124" column="61" lean-forward="true" selection-start-line="124" selection-start-column="61" selection-end-line="124" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lyric_cache.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
@@ -1029,26 +1037,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lyric_cache.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="58" column="8" lean-forward="false" selection-start-line="58" selection-start-column="8" selection-end-line="58" selection-end-column="8" />
-          <folding>
-            <element signature="e#43#57#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lyric_cleaner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2919">
-          <caret line="450" column="31" lean-forward="false" selection-start-line="450" selection-start-column="31" selection-end-line="450" selection-end-column="31" />
-          <folding>
-            <element signature="e#42#58#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/word.data">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="265">
@@ -1057,12 +1045,40 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://C:/Program Files/Python/Lib/site-packages/jieba/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="502" column="0" lean-forward="false" selection-start-line="502" selection-start-column="0" selection-end-line="502" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/lyric_rhythm_analyzer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="126" column="32" lean-forward="true" selection-start-line="126" selection-start-column="32" selection-end-line="126" selection-end-column="32" />
+        <state relative-caret-position="246">
+          <caret line="262" column="24" lean-forward="true" selection-start-line="262" selection-start-column="24" selection-end-line="262" selection-end-column="24" />
           <folding>
             <element signature="e#43#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lyric_cache.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="80" column="8" lean-forward="false" selection-start-line="80" selection-start-column="8" selection-end-line="80" selection-end-column="8" />
+          <folding>
+            <element signature="e#43#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lyric_cleaner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="540" column="39" lean-forward="false" selection-start-line="540" selection-start-column="39" selection-end-line="540" selection-end-column="39" />
+          <folding>
+            <element signature="e#42#58#0" expanded="true" />
           </folding>
         </state>
       </provider>
