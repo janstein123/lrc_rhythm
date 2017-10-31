@@ -373,7 +373,7 @@ def remove_author_again(lines=[]):
 
 
 def remove_voice_line(song_id, song_name, lrc_txt):
-    p = re.compile(u'^[啊|啦|嘿|哈|哟|呦|哎|呀|嗨|咦|吆|噢|呣|嗯|咿|喂|哦|喔|哪|伊]+$', re.MULTILINE)
+    p = re.compile(u'^[啊|啦|嘿|哈|哟|呦|哎|呀|嗨|咦|吆|噢|呣|嗯|咿|喂|哦|喔|哪|伊|哒|嗒]+$', re.MULTILINE)
     p1 = re.compile('\n{2,}')
     new_lrc_lines, n = re.subn(p, '', lrc_txt)
     if n > 0:
@@ -470,10 +470,11 @@ def update_lines(thread_num=1):
         t.start()
 
 
-update_lines(8)
+# update_lines(8)
 
 
 def strip_song_name():
+    print 'strip song name'
     db = LyricCache()
     rows = db.query_name()
     total_len = len(rows)
@@ -487,7 +488,7 @@ def strip_song_name():
             print song_name, new_name, len(song_name), len(new_name)
             song_names_to_update.append((new_name, song_id))
 
-    db.update_name(song_names_to_update)
+            # db.update_name(song_names_to_update)
 
 
 # strip_song_name()
@@ -515,12 +516,12 @@ def remove_repeated_songs():
         line_list = lrc_lines.split(u'\n')
         line_txt = ''.join(line_list)
 
-        first_line = line_txt[:8]
-        last_line = line_txt[-8:]
-        # first_2_lines = '|'.join(line_list[:2])
-        # last_2_lines = '|'.join(line_list[-2:])
-        # last_line = song_name + '|' + line_list[-4]
-        # title_and_last_5_words_dict = song_name + '|' + line_txt[-5:]
+        first_line = line_txt[:7]
+        last_line = line_txt[-7:]
+        # first_line = '|'.join(line_list[:2])
+        # last_line = '|'.join(line_list[-2:])
+        # first_line = song_name + '|' + line_list[2]
+        # last_line = song_name + '|' + line_list[-3]
 
         if first_line in first_dict.keys():
             n = n + 1
@@ -563,15 +564,56 @@ def remove_repeated_songs():
             last_dict[last_line] = [song_id, song_name, singer_name, lrc_lines]
     print len(songs_to_del), 'songs to delete', n, m
     ids_to_del = []
-    for k in songs_to_del:
-        ids_to_del.append((k,))
-    db.delete_songs(ids_to_del)
+    # for k in songs_to_del:
+    #     ids_to_del.append((k,))
+    # db.delete_songs(ids_to_del)
+
 
 # remove_repeated_songs()
-# line = '你好爱戴发到发1234'
-# p = re.compile("[0-9]+$")
-# print re.search(p, line).group(0)
-# remove_author_again()
+
+
+# merge two tables into table2
+def merge_songs(table1_name, table2_name):
+    print 'merge songs', table1_name, table2_name
+    db = LyricCache()
+    rows1 = db.query_songs(table1_name)
+    rows2 = db.query_songs(table2_name)
+    print len(rows1), len(rows2), len(rows1) + len(rows2)
+
+    existed_songs_dict = {}
+    for row in rows2:
+        existed_songs_dict[row[0]] = (row[1], row[3])
+
+    n = 0
+    new_songs = []
+    for row in rows1:
+        n += 1
+        song_id = row[0]
+        song_name = row[1]
+        singer_id = row[2]
+        singer_name = row[3]
+        lyric = row[4]
+        lrc_lines = row[5]
+
+        if song_id not in existed_songs_dict.keys() \
+                and (song_name, singer_name) not in existed_songs_dict.values():
+            new_songs.append((song_id, song_name, singer_id, singer_name, lyric, lrc_lines))
+        elif song_id in existed_songs_dict.keys():
+            print '  id exist --------', song_id, song_name, singer_name, n
+        else:
+            print 'name exist --------', song_id, song_name, singer_name, n
+    print len(new_songs)
+    count = 100
+    part_len = len(new_songs) / count
+    print part_len
+    for i in range(count):
+        if i < count - 1:
+            db.insert_many_songs(new_songs[part_len * i:part_len * (i + 1)], table2_name)
+        else:
+            db.insert_many_songs(new_songs[part_len * i:], table2_name)
+
+# merge_songs('new_lyrics', 'all_lyrics')
+
 # new_dict = sorted(a_dict.items(), key=lambda a: a[1], reverse=True)
 # file = open('nums.txt', 'w')
 # for a in new_dict:
@@ -581,14 +623,3 @@ def remove_repeated_songs():
 # print len(author_dict)
 # new_dict = sorted(author_dict.items(), key=lambda a: a[1], reverse=True)
 #
-# file = open('keys.txt', 'w')
-# for a in new_dict:
-#     print a[0], a[1]
-#     file.write(a[0].encode('utf-8') + ', ' + str(a[1]) + '\n')
-# file.close()
-# print hex(ord(u'の'))
-# l = u'许　仙 　'
-# for a in l:
-#     print hex(ord(a))
-# p = re.compile(u'.*?[:：]+?')
-# print re.sub(p, '', u'fafaf:fadaf 作词：ewwoeir你的')

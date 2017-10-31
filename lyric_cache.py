@@ -56,6 +56,29 @@ class LyricCache:
             print 'clear:' + str(e)
             return None
 
+    # for merging songs
+    def query_songs(self, table_name):
+        c = self.__conn.cursor()
+        try:
+            c.execute('SELECT song_id, song_name, singer_id, singer_name, lyric, lrc_lines from ' + table_name)
+            self.__conn.commit()
+            return c.fetchall()
+        except MySQLdb.Error as e:
+            print 'query_songs:' + str(e)
+            return None
+
+    # for merging songs
+    def insert_many_songs(self, lyric_list, table_name):
+        c = self.__conn.cursor()
+        sql = "REPLACE INTO " + table_name + " (song_id, song_name, singer_id, singer_name, lyric, lrc_lines) VALUES (%s, %s, %s, %s, %s, %s)"
+        print sql
+        try:
+            rows = c.executemany(sql, lyric_list)
+            self.__conn.commit()
+            print rows, 'songs inserted.'
+        except MySQLdb.Error as e:
+            print 'insert_many_songs:' + str(e)
+
     def query_name(self):
         c = self.__conn.cursor()
         try:
