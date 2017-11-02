@@ -289,9 +289,9 @@ def get_all_of_rhyme_once():
         print '--------------------', song_id, song_name, singer_name, '--------------------', n
         lines = line_txt.split('\n')
         results = get_result_of_rhyme_once(lines)
-        for r in results:
-            if r:
-                print '|'.join(r)
+        # for r in results:
+        #     if r:
+        #         print '|'.join(r)
         song_rhyme_dict[song_id] = results
 
     all_results = [[] for rs in range(RHYTHM_NUM)]
@@ -315,3 +315,4 @@ def get_all_of_rhyme_once():
                 print count[0], count[1]
 
 get_all_of_rhyme_once()
+# print unichr(0x35ce)

@@ -104,10 +104,10 @@ class LyricCache:
     def query_all_lines(self):
         c = self.__conn.cursor()
         try:
-            c.execute('SELECT song_id, song_name, singer_name, lrc_lines from ' + self.__table_name)
-            # sql = 'SELECT song_id, song_name, singer_name, lrc_lines FROM ' + self.__table_name + ' WHERE song_id = 248097'
+            sql = 'SELECT song_id, song_name, singer_name, lrc_lines from ' + self.__table_name
+            # sql = 'SELECT song_id, song_name, singer_name, lrc_lines FROM ' + self.__table_name + ' WHERE song_id > 438466471'
             # print sql
-            # c.execute(sql)
+            c.execute(sql)
             self.__conn.commit()
             return c.fetchall()
         except MySQLdb.Error as e:
