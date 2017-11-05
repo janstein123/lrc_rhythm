@@ -330,7 +330,7 @@ def get_all_of_rhyme_once():
         lrc_file.flush()
         lrc_file.close()
     lrc_f.flush()
-    lrc_file.close()
+    lrc_f.close()
 
 
 get_all_of_rhyme_once()
