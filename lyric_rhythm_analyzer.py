@@ -22,6 +22,8 @@ from lyric_cache import LyricCache
 #                 ['eng', 'ing', 'ong', 'iong'],
 #                 ['en', 'in', 'un']]
 RHYTHM_NUM = 13
+# 辙 名 包含的韵母 收音
+
 # 一 七 i (—i) v (er) / i v（西）
 # 姑 苏 u / u （出）
 # 发 花 a ia ua /a (佳)
@@ -72,13 +74,15 @@ def get_result_of_rhyme_once(lyric_lines=[]):
     short_lines = []
     ab = AlphaBet.get_instance()
     for i in range(len(lyric_lines)):
+        # print '|'.join(list(jieba.cut(lyric_lines[i])))
         short_lines.append(list(jieba.cut(lyric_lines[i]))[-1])
         line_ab = ab.chinese2ab(short_lines[i])
         lyric_ab_lines[i] = line_ab
         # print lyric_lines[i]
         # print line_ab
     result = [[] for rows in range(RHYTHM_NUM)]
-
+    # for ab in lyric_ab_lines:
+    #     print ab
     for i in range(1, len(lyric_ab_lines)):
         last_last_ab = lyric_ab_lines[i - 2][-1:] if i > 1 else None
         last_ab = lyric_ab_lines[i - 1][-1:]
@@ -272,6 +276,7 @@ def get_all_of_rhyme_by_count(count):
         for count in sorted_counts:
             print count[0], count[1]
 
+
 # get_all_of_rhyme_by_count(3)
 
 
@@ -300,19 +305,33 @@ def get_all_of_rhyme_once():
     for key in song_rhyme_dict.keys():
         for i in range(len(song_rhyme_dict[key])):
             all_results[i].extend(song_rhyme_dict[key][i])
+    lrc_f = open('lrc', 'w')
+    for i in range(len(all_results)):
+        result = all_results[i]
+        # print '--------------------', str(i), len(result), '--------------------'
+        word_str = str(i) + '   ' + str(len(result)) + "\n"
+        print word_str
 
-    for result in all_results:
-        print len(result), '|'.join(result)
+        lrc_f.write(word_str.encode('UTF-8'))
         count_dict = {}
         for word in result:
             if word not in count_dict.keys():
                 count_dict[word] = 1
             else:
                 count_dict[word] += 1
-        count_dict = sorted(count_dict.items(), key=lambda a: a[1], reverse=True)
-        for count in count_dict:
-            if i < len(count_dict):
-                print count[0], count[1]
+        count_list = sorted(count_dict.items(), key=lambda a: a[1], reverse=True)
+
+        lrc_file = open('lrc' + str(i), 'w')
+
+        for count in count_list:
+            count_str = count[0] + "\t" + str(count[1]) + "\n"
+            # print count_str
+            lrc_file.write(count_str.encode('UTF-8'))
+        lrc_file.flush()
+        lrc_file.close()
+    lrc_f.flush()
+    lrc_file.close()
+
 
 get_all_of_rhyme_once()
 # print unichr(0x35ce)

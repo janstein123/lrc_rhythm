@@ -105,7 +105,7 @@ class LyricCache:
         c = self.__conn.cursor()
         try:
             sql = 'SELECT song_id, song_name, singer_name, lrc_lines from ' + self.__table_name
-            # sql = 'SELECT song_id, song_name, singer_name, lrc_lines FROM ' + self.__table_name + ' WHERE song_id > 438466471'
+            # sql = 'SELECT song_id, song_name, singer_name, lrc_lines FROM ' + self.__table_name + ' WHERE song_id = 228916'
             # print sql
             c.execute(sql)
             self.__conn.commit()
