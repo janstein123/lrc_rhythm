@@ -305,7 +305,7 @@ def get_all_of_rhyme_once():
     for key in song_rhyme_dict.keys():
         for i in range(len(song_rhyme_dict[key])):
             all_results[i].extend(song_rhyme_dict[key][i])
-    lrc_f = open('lrc', 'w')
+    lrc_f = open('result\lrc0000', 'w')
     for i in range(len(all_results)):
         result = all_results[i]
         # print '--------------------', str(i), len(result), '--------------------'
@@ -321,7 +321,7 @@ def get_all_of_rhyme_once():
                 count_dict[word] += 1
         count_list = sorted(count_dict.items(), key=lambda a: a[1], reverse=True)
 
-        lrc_file = open('lrc' + str(i), 'w')
+        lrc_file = open('result\lrc0000' + str(i), 'w')
 
         for count in count_list:
             count_str = count[0] + "\t" + str(count[1]) + "\n"
