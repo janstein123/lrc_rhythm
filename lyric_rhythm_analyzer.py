@@ -167,7 +167,7 @@ def get_result_of_rhyme_twice(lyric_lines=[]):
 
             if last_last_rhythm_index_1 == current_rhythm_index_1 and last_last_rhythm_index_2 == current_rhythm_index_2:
                 if key not in result.keys():
-                    result[key] = [lyric_lines[i - 1][-2:], ]
+                    result[key] = [lyric_lines[i - 2][-2:], ]
                 result[key].append(lyric_lines[i][-2:])
                 # print 'match last last'
                 # print lyric_lines[i - 2][-2:], lyric_lines[i][-2:]
@@ -175,7 +175,7 @@ def get_result_of_rhyme_twice(lyric_lines=[]):
 
 
 def get_result_of_rhyme_3times(lyric_lines=[]):
-    print '|'.join(lyric_lines)
+    # print '|'.join(lyric_lines)
     lyric_ab_lines = [''] * len(lyric_lines)
 
     ab = AlphaBet.get_instance()
@@ -228,14 +228,14 @@ def get_result_of_rhyme_3times(lyric_lines=[]):
                     and last_last_rhythm_index_2 == current_rhythm_index_2 \
                     and last_last_rhythm_index_3 == current_rhythm_index_3:
                 if key not in result.keys():
-                    result[key] = [lyric_lines[i - 1][-3:], ]
+                    result[key] = [lyric_lines[i - 2][-3:], ]
                 result[key].append(lyric_lines[i][-3:])
                 # print 'match last last'
                 # print lyric_lines[i - 2][-2:], lyric_lines[i][-2:]
     return result
 
 
-def get_all_of_rhyme_by_count(count):
+def get_all_of_rhyme_by_count(r_times):
     db = LyricCache()
     rows = db.query_all_lines()
     all_results = {}
@@ -248,13 +248,13 @@ def get_all_of_rhyme_by_count(count):
         line_txt = row[3]
         print '--------------------', song_id, song_name, singer_name, '--------------------', n
         lines = line_txt.split('\n')
-        if count == 2:
+        if r_times == 2:
             results = get_result_of_rhyme_twice(lines)
-        elif count == 3:
+        elif r_times == 3:
             results = get_result_of_rhyme_3times(lines)
         else:
             results = {}
-        print len(results)
+        # print len(results)
         for key in results.keys():
             print key, '|'.join(results[key])
             if key not in all_results.keys():
@@ -264,17 +264,44 @@ def get_all_of_rhyme_by_count(count):
 
     sorted_lst = sorted(all_results.items(), key=lambda a: len(a[1]), reverse=True)
     print '---------------------ordered list----------------------------'
+    if r_times == 2:
+        lrc_f = open('result\double\lrc_rhyme_count', 'w')
+    else:
+        lrc_f = open("result\\triple\lrc_rhyme_count", 'w')
+
     for l in sorted_lst:
-        print l[0], len(l[1])
-        counts = {}
+        rhyme_count = str(l[0]) + '\t' + str(len(l[1])) + '\n'
+        lrc_f.write(rhyme_count.encode('UTF-8'))
+
+        word_counts = {}
         for word in l[1]:
-            if word in counts.keys():
-                counts[word] += 1
+            if word in word_counts.keys():
+                word_counts[word] += 1
             else:
-                counts[word] = 1
-        sorted_counts = sorted(counts.items(), key=lambda a: a[1], reverse=True)
-        for count in sorted_counts:
-            print count[0], count[1]
+                word_counts[word] = 1
+
+        print l[0], '|'.join(word_counts.keys())
+
+        if r_times == 3:
+            lrc_file = open('result\\triple\lrc_rhyme_' + str(l[0][0]) + '_' + str(l[0][1]) + '_' + str(l[0][2]), 'w')
+            for word in word_counts.keys():
+                count_str = word + "\n"
+                lrc_file.write(count_str.encode('UTF-8'))
+            lrc_file.flush()
+            lrc_file.close()
+        else:
+            sorted_counts = sorted(word_counts.items(), key=lambda a: a[1], reverse=True)
+            if len(sorted_counts) > 20:
+                if r_times == 2:
+                    lrc_file = open('result\double\lrc_rhyme_' + str(l[0][0]) + '_' + str(l[0][1]), 'w')
+
+                for row in sorted_counts:
+                    count_str = row[0] + "\t" + str(row[1]) + "\n"
+                    lrc_file.write(count_str.encode('UTF-8'))
+                lrc_file.flush()
+                lrc_file.close()
+    lrc_f.flush()
+    lrc_f.close()
 
 
 # get_all_of_rhyme_by_count(3)
@@ -305,7 +332,7 @@ def get_all_of_rhyme_once():
     for key in song_rhyme_dict.keys():
         for i in range(len(song_rhyme_dict[key])):
             all_results[i].extend(song_rhyme_dict[key][i])
-    lrc_f = open('result\lrc0000', 'w')
+    lrc_f = open('result\lrc', 'w')
     for i in range(len(all_results)):
         result = all_results[i]
         # print '--------------------', str(i), len(result), '--------------------'
@@ -321,7 +348,7 @@ def get_all_of_rhyme_once():
                 count_dict[word] += 1
         count_list = sorted(count_dict.items(), key=lambda a: a[1], reverse=True)
 
-        lrc_file = open('result\lrc0000' + str(i), 'w')
+        lrc_file = open('result\lrc' + str(i), 'w')
 
         for count in count_list:
             count_str = count[0] + "\t" + str(count[1]) + "\n"
@@ -332,6 +359,5 @@ def get_all_of_rhyme_once():
     lrc_f.flush()
     lrc_f.close()
 
-
-get_all_of_rhyme_once()
-# print unichr(0x35ce)
+# get_all_of_rhyme_once()
+# print unichr(0x7cec)
